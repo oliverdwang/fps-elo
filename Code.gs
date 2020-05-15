@@ -1,4 +1,14 @@
 /**
+ * @file Code.gs
+ *
+ * @brief Custom scripts to create competitive tracking environment
+ *
+ * @date 14 May 2020
+ *
+ * @author Oliver Wang <odwang@cmu.edu>
+ */
+
+/**
  * @brief Determines if an input number is between two other given numbers
  */
 function inRange(num, lo, hi) {
