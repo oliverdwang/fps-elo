@@ -1,4 +1,6 @@
 # fps-elo
 fps-elo is a Google Sheets based competitive elo tracking system that allows for up to 2 5 person teams in a custom game mode. The core ranking algorithm used is based off of the Elo rating system, but has been adapted to be suitable for team based gameplay by distributing ranking points by differences in skill level, gameplay performance, and overall game decisiveness. This project is currently being used for custom Valorant games, and thus is centers performance analytics behind two key measures: rounds won by each team, and combat score of each player. However, these heuristics can be adapted for other games easily.
+
 This project is still in development, and as such contains many bugs and is still lacking in full functionality. These problems will be tracked via the Github issue tracker, and are encouraged to be reported, though it is unlikely I will be able to address these immediately. I will eventually add the relavent Google spreadsheet that these scripts interact with, along side with a tutorial/setup guide, but the code is fairly self explainatory.
+
 As a final closing thought, this project is being released under the GPU aGPL open source license. Please leave a link to this repository if you clone or modify the code, and keep the code open source for others to develop upon. Thanks!
