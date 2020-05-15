@@ -51,18 +51,18 @@ function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
   for (let i = 0; i < teamOneElosRaw.length; ++i) {
     teamOneElos.push(teamOneElosRaw[i][0]);
   }
-  var teamOneScore = SpreadsheetApp.getActiveSpreadsheet().getRange("B7").getValue();
-  var teamTwoPlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A9:A13").getValues();
+  var teamOneScore = SpreadsheetApp.getActiveSpreadsheet().getRange("B8").getValue();
+  var teamTwoPlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A11:A15").getValues();
   var teamTwoPlayers = [];
   for (let i = 0; i < teamTwoPlayersRaw.length; ++i) {
     teamTwoPlayers.push(teamTwoPlayersRaw[i][0]);
   }
-  var teamTwoElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B9:B13").getValues();
+  var teamTwoElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B11:B15").getValues();
   var teamTwoElos = [];
   for (let i = 0; i < teamTwoElosRaw.length; ++i) {
     teamTwoElos.push(teamTwoElosRaw[i][0]);
   }
-  var teamTwoScore = SpreadsheetApp.getActiveSpreadsheet().getRange("B14").getValue();
+  var teamTwoScore = SpreadsheetApp.getActiveSpreadsheet().getRange("B17").getValue();
   
   // Elo computation variables
   // Number of teams
@@ -80,7 +80,7 @@ function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
     if (teamOnePlayers[i] != "") {
       teamOneSize++;
       teamOneElo += teamOneElos[i];
-      players.push({team: 1, name: teamOnePlayers[i], preElo: teamOneElos[i], postElo: teamOneElos[i], percEloLose: 0, percEloWin: 0});
+      players.push({name: teamOnePlayers[i], preElo: teamOneElos[i], postElo: teamOneElos[i], percEloLose: 0, percEloWin: 0});
     }
   }
   var teamTwoSize = 0;
@@ -89,7 +89,7 @@ function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
     if (teamTwoPlayers[i] != "") {
       teamTwoSize++;
       teamTwoElo += teamTwoElos[i];
-      players.push({team: 2, name: teamTwoPlayers[i], preElo: teamTwoElos[i], postElo: teamOneElos[i], percEloLose: 0, percEloWin: 0});
+      players.push({name: teamTwoPlayers[i], preElo: teamTwoElos[i], postElo: teamTwoElos[i], percEloLose: 0, percEloWin: 0});
     }
   }
   
@@ -184,48 +184,48 @@ function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
   
   // Update spreadsheet
   if (teamOneSize >= 1) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("B21");
-    range.setValue(players[0].preElo);
+    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("B20");
+    range.setValue(players[0].postElo);
 
     if (teamOneSize >= 2) {
-      range = SpreadsheetApp.getActiveSpreadsheet().getRange("B22");
-      range.setValue(players[1].preElo);
+      range = SpreadsheetApp.getActiveSpreadsheet().getRange("B21");
+      range.setValue(players[1].postElo);
 
       if (teamOneSize >= 3) {
-        range = SpreadsheetApp.getActiveSpreadsheet().getRange("B23");
-        range.setValue(players[2].preElo);
+        range = SpreadsheetApp.getActiveSpreadsheet().getRange("B22");
+        range.setValue(players[2].postElo);
 
         if (teamOneSize >= 4) {
-          range = SpreadsheetApp.getActiveSpreadsheet().getRange("B24");
-          range.setValue(players[3].preElo);
+          range = SpreadsheetApp.getActiveSpreadsheet().getRange("B23");
+          range.setValue(players[3].postElo);
         
           if (teamOneSize == 5) {
-            range = SpreadsheetApp.getActiveSpreadsheet().getRange("B25");
-            range.setValue(players[4].preElo);
+            range = SpreadsheetApp.getActiveSpreadsheet().getRange("B24");
+            range.setValue(players[4].postElo);
           }
         }
       }
     }
   } 
   if (teamTwoSize >= 1) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("D21");
-    range.setValue(players[teamOneSize].preElo);
+    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("D20");
+    range.setValue(players[teamOneSize].postElo);
 
     if (teamTwoSize >= 2) {
-      range = SpreadsheetApp.getActiveSpreadsheet().getRange("D22");
-      range.setValue(players[teamOneSize+1].preElo);
+      range = SpreadsheetApp.getActiveSpreadsheet().getRange("D21");
+      range.setValue(players[teamOneSize+1].postElo);
     
       if (teamTwoSize >= 3) {
-        range = SpreadsheetApp.getActiveSpreadsheet().getRange("D23");
-        range.setValue(players[teamOneSize+2].preElo);
+        range = SpreadsheetApp.getActiveSpreadsheet().getRange("D22");
+        range.setValue(players[teamOneSize+2].postElo);
 
         if (teamTwoSize >= 4) {
-          range = SpreadsheetApp.getActiveSpreadsheet().getRange("D24");
-          range.setValue(players[teamOneSize+3].preElo);
+          range = SpreadsheetApp.getActiveSpreadsheet().getRange("D23");
+          range.setValue(players[teamOneSize+3].postElo);
         
           if (teamTwoSize == 5) {
-            range = SpreadsheetApp.getActiveSpreadsheet().getRange("D25");
-            range.setValue(players[teamOneSize+4].preElo);
+            range = SpreadsheetApp.getActiveSpreadsheet().getRange("D24");
+            range.setValue(players[teamOneSize+4].postElo);
           }
         }
       }
@@ -252,35 +252,57 @@ function getFirstEmptyRow() {
 
 function updateHistory(players, teamOneSize, teamTwoSize) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Match History");
+  var firstEmptyRow = getFirstEmptyRow();
 
-  // Write player names
+  // Write timestamp
+  sheet.getRange("A"+firstEmptyRow).setValue(new Date().toLocaleString());
+
+  // Write metrics from players
   if (teamOneSize >= 1) {
-    sheet.getRange("B"+getFirstEmptyRow()).setValue(players[0].name);
+    sheet.getRange("B"+firstEmptyRow).setValue(players[0].name);
+    sheet.getRange("C"+firstEmptyRow).setValue(players[0].preElo);
+    sheet.getRange("E"+firstEmptyRow).setValue(players[0].postElo);
     if (teamOneSize >= 2) {
-      sheet.getRange("F"+getFirstEmptyRow()).setValue(players[1].name);
+      sheet.getRange("F"+firstEmptyRow).setValue(players[1].name);
+      sheet.getRange("G"+firstEmptyRow).setValue(players[1].preElo);
+      sheet.getRange("I"+firstEmptyRow).setValue(players[1].postElo);
       if (teamOneSize >= 3) {
-        sheet.getRange("J"+getFirstEmptyRow()).setValue(players[2].name);
+        sheet.getRange("J"+firstEmptyRow).setValue(players[2].name);
+        sheet.getRange("K"+firstEmptyRow).setValue(players[2].preElo);
+        sheet.getRange("M"+firstEmptyRow).setValue(players[2].postElo);
         if (teamOneSize >= 4) {
-          sheet.getRange("N"+getFirstEmptyRow()).setValue(players[3].name);
+          sheet.getRange("N"+firstEmptyRow).setValue(players[3].name);
+          sheet.getRange("O"+firstEmptyRow).setValue(players[3].preElo);
+          sheet.getRange("Q"+firstEmptyRow).setValue(players[3].postElo);
           if (teamOneSize == 5) {
-            sheet.getRange("R"+getFirstEmptyRow()).setValue(players[4].name);
-      
+            sheet.getRange("R"+firstEmptyRow).setValue(players[4].name);
+            sheet.getRange("S"+firstEmptyRow).setValue(players[4].preElo);
+            sheet.getRange("U"+firstEmptyRow).setValue(players[4].postElo);
           }
         }
       }
     }
   }
   if (teamTwoSize >= 1) {
-    sheet.getRange("V"+getFirstEmptyRow()).setValue(players[teamOneSize].name);
+    sheet.getRange("V"+firstEmptyRow).setValue(players[teamOneSize].name);
+    sheet.getRange("W"+firstEmptyRow).setValue(players[teamOneSize].preElo);
+    sheet.getRange("Y"+firstEmptyRow).setValue(players[teamOneSize].postElo);
     if (teamTwoSize >= 2) {
-      sheet.getRange("Z"+getFirstEmptyRow()).setValue(players[teamOneSize+1].name);
+      sheet.getRange("Z"+firstEmptyRow).setValue(players[teamOneSize+1].name);
+      sheet.getRange("AA"+firstEmptyRow).setValue(players[teamOneSize+1].preElo);
+      sheet.getRange("AC"+firstEmptyRow).setValue(players[teamOneSize+1].postElo);
       if (teamTwoSize >= 3) {
-        sheet.getRange("AD"+getFirstEmptyRow()).setValue(players[teamOneSize+2].name);
+        sheet.getRange("AD"+firstEmptyRow).setValue(players[teamOneSize+2].name);
+        sheet.getRange("AE"+firstEmptyRow).setValue(players[teamOneSize+2].preElo);
+        sheet.getRange("AG"+firstEmptyRow).setValue(players[teamOneSize+2].postElo);
         if (teamTwoSize >= 4) {
-          sheet.getRange("AH"+getFirstEmptyRow()).setValue(players[teamOneSize+3].name);
+          sheet.getRange("AH"+firstEmptyRow).setValue(players[teamOneSize+3].name);
+          sheet.getRange("AI"+firstEmptyRow).setValue(players[teamOneSize+3].preElo);
+          sheet.getRange("AK"+firstEmptyRow).setValue(players[teamOneSize+3].postElo);
           if (teamTwoSize == 5) {
-            sheet.getRange("AL"+getFirstEmptyRow()).setValue(players[teamOneSize+4].name);
-      
+            sheet.getRange("AL"+firstEmptyRow).setValue(players[teamOneSize+4].name);
+            sheet.getRange("AM"+firstEmptyRow).setValue(players[teamOneSize+4].preElo);
+            sheet.getRange("AO"+firstEmptyRow).setValue(players[teamOneSize+4].postElo);
           }
         }
       }
