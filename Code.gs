@@ -40,45 +40,45 @@ function determineK(teamOneScore, teamTwoScore) {
  */
 function updateELO() {
   //Inputs
-  var teamOnePlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A2:A6").getValues();
+  var teamOnePlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A12:A16").getValues();
   var teamOnePlayers = [];
   for (let i = 0; i < teamOnePlayersRaw.length; ++i) {
     teamOnePlayers.push(teamOnePlayersRaw[i][0]);
   }
 
-  var teamOneElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B2:B6").getValues();
+  var teamOneElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B12:B16").getValues();
   var teamOneElos = [];
   for (let i = 0; i < teamOneElosRaw.length; ++i) {
     teamOneElos.push(teamOneElosRaw[i][0]);
   }
 
-  var teamOneCombatScoresRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("C2:C6").getValues();
+  var teamOneCombatScoresRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("C12:C16").getValues();
   var teamOneCombatScores = [];
   for (let i = 0; i < teamOneCombatScoresRaw.length; ++i) {
     teamOneCombatScores.push(teamOneCombatScoresRaw[i][0]);
   }
 
-  var teamOneScore = SpreadsheetApp.getActiveSpreadsheet().getRange("B8").getValue();
+  var teamOneScore = SpreadsheetApp.getActiveSpreadsheet().getRange("B18").getValue();
 
-  var teamTwoPlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A11:A15").getValues();
+  var teamTwoPlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A21:A25").getValues();
   var teamTwoPlayers = [];
   for (let i = 0; i < teamTwoPlayersRaw.length; ++i) {
     teamTwoPlayers.push(teamTwoPlayersRaw[i][0]);
   }
 
-  var teamTwoElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B11:B15").getValues();
+  var teamTwoElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B21:B25").getValues();
   var teamTwoElos = [];
   for (let i = 0; i < teamTwoElosRaw.length; ++i) {
     teamTwoElos.push(teamTwoElosRaw[i][0]);
   }
 
-  var teamTwoCombatScoresRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("C11:C15").getValues();
+  var teamTwoCombatScoresRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("C21:C25").getValues();
   var teamTwoCombatScores = [];
   for (let i = 0; i < teamTwoCombatScoresRaw.length; ++i) {
     teamTwoCombatScores.push(teamTwoCombatScoresRaw[i][0]);
   }
 
-  var teamTwoScore = SpreadsheetApp.getActiveSpreadsheet().getRange("B17").getValue();
+  var teamTwoScore = SpreadsheetApp.getActiveSpreadsheet().getRange("B27").getValue();
   
   // Elo computation variables
   // Number of teams
@@ -199,26 +199,45 @@ function updateELO() {
   for (let i = teamOneSize; i < teamOneSize+teamTwoSize; i++) {
     players[i].postElo += 0.01*teamTwoEloChange*((1-s)*players[i].percEloWin+s*players[i].percEloLose);
   }
+
+  // Update players tab
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Players");
+  // Iterate through each player
+  for (let i = 0; i < teamOneSize+teamTwoSize; i++) {
+    var playerListRaw = sheet.getRange("B2:B99").getValues();
+    var row;
+    for (row = 0; playerListRaw[row][0] != ""; row++) {
+      if (playerListRaw[row][0] == players[i].name) {
+        // Found matching name, so update respective elo
+        sheet.getRange("C"+Number(row+2)).setValue(players[i].postElo);
+        break;
+      }
+    }
+    if (playerListRaw[row][0] == "") {
+      Browser.msgBox("Error: Player not found");
+      return;
+    }
+  }
   
-  // Update spreadsheet
+  // Update spreadsheet for quick view
   if (teamOneSize >= 1) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("B20");
+    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("B31");
     range.setValue(players[0].postElo);
 
     if (teamOneSize >= 2) {
-      range = SpreadsheetApp.getActiveSpreadsheet().getRange("B21");
+      range = SpreadsheetApp.getActiveSpreadsheet().getRange("B32");
       range.setValue(players[1].postElo);
 
       if (teamOneSize >= 3) {
-        range = SpreadsheetApp.getActiveSpreadsheet().getRange("B22");
+        range = SpreadsheetApp.getActiveSpreadsheet().getRange("B33");
         range.setValue(players[2].postElo);
 
         if (teamOneSize >= 4) {
-          range = SpreadsheetApp.getActiveSpreadsheet().getRange("B23");
+          range = SpreadsheetApp.getActiveSpreadsheet().getRange("B34");
           range.setValue(players[3].postElo);
         
           if (teamOneSize == 5) {
-            range = SpreadsheetApp.getActiveSpreadsheet().getRange("B24");
+            range = SpreadsheetApp.getActiveSpreadsheet().getRange("B35");
             range.setValue(players[4].postElo);
           }
         }
@@ -226,23 +245,23 @@ function updateELO() {
     }
   } 
   if (teamTwoSize >= 1) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("D20");
+    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("D31");
     range.setValue(players[teamOneSize].postElo);
 
     if (teamTwoSize >= 2) {
-      range = SpreadsheetApp.getActiveSpreadsheet().getRange("D21");
+      range = SpreadsheetApp.getActiveSpreadsheet().getRange("D32");
       range.setValue(players[teamOneSize+1].postElo);
     
       if (teamTwoSize >= 3) {
-        range = SpreadsheetApp.getActiveSpreadsheet().getRange("D22");
+        range = SpreadsheetApp.getActiveSpreadsheet().getRange("D33");
         range.setValue(players[teamOneSize+2].postElo);
 
         if (teamTwoSize >= 4) {
-          range = SpreadsheetApp.getActiveSpreadsheet().getRange("D23");
+          range = SpreadsheetApp.getActiveSpreadsheet().getRange("D34");
           range.setValue(players[teamOneSize+3].postElo);
         
           if (teamTwoSize == 5) {
-            range = SpreadsheetApp.getActiveSpreadsheet().getRange("D24");
+            range = SpreadsheetApp.getActiveSpreadsheet().getRange("D35");
             range.setValue(players[teamOneSize+4].postElo);
           }
         }
