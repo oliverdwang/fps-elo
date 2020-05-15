@@ -384,6 +384,8 @@ function updateHistory(players, teamOneScore, teamTwoScore, teamOneSize, teamTwo
   sheet.getRange("AP"+firstEmptyRow).setValue(teamOneScore);
   sheet.getRange("AQ"+firstEmptyRow).setValue(teamTwoScore);
 
+  // @todo clear names, combat score, rounds won
+
   return false;
 }
 
@@ -397,26 +399,75 @@ function balanceTeams() {
   var teamOneElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B12:B16").getValues();
   var teamTwoPlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A21:A25").getValues();
   var teamTwoElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B21:B25").getValues();
-  var playersRaw = [];
+  var players = [];
   for (let i = 0; i < teamOnePlayersRaw.length; i++) {
-    playersRaw.push({name: teamOnePlayersRaw[i][0], elo: teamOneElosRaw[i][0]});
+    if (teamOnePlayersRaw[i][0] != "") {
+      players.push({name: teamOnePlayersRaw[i][0], elo: teamOneElosRaw[i][0]});
+    }
   }
   for (let i = 0; i < teamTwoPlayersRaw.length; i++) {
-    playersRaw.push({name: teamTwoPlayersRaw[i][0], elo: teamTwoElosRaw[i][0]});
+    if (teamTwoPlayersRaw[i][0] != "") {
+      players.push({name: teamTwoPlayersRaw[i][0], elo: teamTwoElosRaw[i][0]});
+    }
   }
 
-  // Remove tuples with empty player names
-  var players = playersRaw.filter(function (value, index, array) {
-    return value.name != "";
+  // Sort all players from highest elo to lowest elo
+  players.sort(function (a,b) {
+    return b.elo - a.elo;
   });
 
-  var output = "";
-  for (let i = 0; i < players.length; i++) {
-    output += players[i].name + "<=>";
+  // Assign teams 
+  teamOnePlayersRaw = [];
+  teamTwoPlayersRaw = [];
+  teamOneElosRaw = [];
+  teamTwoElosRaw = [];
+  var teamOneElo = 0;
+  var teamTwoElo = 0;
+  while (players.length > 0) {
+    var player = players.pop();
+    //Browser.msgBox(players.length+":"+player.name+","+player.elo);
+    if (teamOneElo <= teamTwoElo) {
+      teamOnePlayersRaw.push(player.name);
+      teamOneElosRaw.push(player.elo);
+      teamOneElo += player.elo;
+    } else {
+      teamTwoPlayersRaw.push(player.name);
+      teamTwoElosRaw.push(player.elo);
+      teamTwoElo += player.elo;
+    }
   }
-  Browser.msgBox(output);
-
-  // Use greedy heuristic to balance teams
-  // Sort all players
-
+  var teamOneSize = teamOnePlayersRaw.length;
+  var teamTwoSize = teamTwoPlayersRaw.length;
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
+  if (teamOneSize >= 1) {
+    sheet.getRange("A12").setValue(teamOnePlayersRaw[0]);
+    if (teamOneSize >= 2) {
+      sheet.getRange("A13").setValue(teamOnePlayersRaw[1]);
+      if (teamOneSize >= 3) {
+        sheet.getRange("A14").setValue(teamOnePlayersRaw[2]);
+        if (teamOneSize >= 4) {
+          sheet.getRange("A15").setValue(teamOnePlayersRaw[3]);
+          if (teamOneSize == 5) {
+            sheet.getRange("A16").setValue(teamOnePlayersRaw[4]);
+          }
+        }
+      }
+    }
+  }
+  if (teamTwoSize >= 1) {
+    sheet.getRange("A21").setValue(teamTwoPlayersRaw[0]);
+    if (teamOneSize >= 2) {
+      sheet.getRange("A22").setValue(teamTwoPlayersRaw[1]);
+      if (teamOneSize >= 3) {
+        sheet.getRange("A23").setValue(teamTwoPlayersRaw[2]);
+        if (teamOneSize >= 4) {
+          sheet.getRange("A24").setValue(teamTwoPlayersRaw[3]);
+          if (teamOneSize == 5) {
+            sheet.getRange("A25").setValue(teamTwoPlayersRaw[4]);
+          }
+        }
+      }
+    }
+  }
+  // @todo clear new elo, combat score, rounds won
 }
