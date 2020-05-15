@@ -4,27 +4,33 @@
  * @brief Custom script to create competitive skill tracking environment for custom Valorant games
  *
  * @date 14 May 2020
- *
+ * 
  * @author Oliver Wang <odwang@cmu.edu>
- *
- * Copyright (C) 2020  Oliver Wang
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
+ * 
+ * Copyright (C) 2020  Oliver Wang            
+ *            
+ * This program is free software: you can redistribute it and/or modify            
+ * it under the terms of the GNU Affero General Public License as published            
+ * by the Free Software Foundation, either version 3 of the License, or            
+ * (at your option) any later version.            
+ *            
+ * This program is distributed in the hope that it will be useful,            
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of            
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            
+ * GNU Affero General Public License for more details.            
+ *            
+ * You should have received a copy of the GNU Affero General Public License            
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * @brief Determines if an input number is between two other given numbers
+ * 
+ * @param num     Number to check if it is in a given range
+ * @param lo      Lower bound of the range
+ * @param hi      Upper bound of the range
+ * 
+ * @returns boolean value of whether or not num is between lo and hi (inclusive)       
  */
 function inRange(num, lo, hi) {
   return (num >= lo) && (num <= hi);
@@ -32,6 +38,11 @@ function inRange(num, lo, hi) {
 
 /**
  * @brief Returns an appropriate k value to use for a given game score disparity
+ * 
+ * @param teamOneScore  Number of rounds won by team one
+ * @param teamTwoScore  Number of rounds won by team two
+ * 
+ * @returns k value to use for elo based ranking point adjustments
  */
 function determineK(teamOneScore, teamTwoScore) {
   // Parameters
@@ -289,7 +300,9 @@ function updateELO() {
 }
 
 /**
- * @brief Returns first row with blank cell in timestamp column
+ * @brief Finds the first row with blank cell in timestamp column
+ * 
+ * @returns Row number that is empty
  */
 function getFirstEmptyRow() {
   var spr = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Match History");
@@ -304,6 +317,12 @@ function getFirstEmptyRow() {
 
 /**
  * @brief Adds log to round history
+ * 
+ * @param players       Array of player that were in the game
+ * @param teamOneScore  Number of rounds won by team one
+ * @param teamTwoScore  Number of rounds won by team two
+ * @param teamOneSize   Number of players in team one
+ * @param teamTwoSize   Number of players in team two
  */
 function updateHistory(players, teamOneScore, teamTwoScore, teamOneSize, teamTwoSize) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Match History");
@@ -381,6 +400,11 @@ function updateHistory(players, teamOneScore, teamTwoScore, teamOneSize, teamTwo
   return false;
 }
 
+function revertGame() {
+  // @todo add revert game functionality
+}
+
 function balanceTeams() {
+  // @todo add balance team functionality
   //Browser.msgBox("Hi "+getFirstEmptyRow());
 }
