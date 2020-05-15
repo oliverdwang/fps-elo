@@ -1,4 +1,34 @@
-function updateMMR(teamOnePlayers, teamOneElos, teamOneScore,
+/**
+ * @brief Determines if an input number is between two other given numbers
+ */
+function inRange(num, lo, hi) {
+  return (num >= lo) && (num <= hi);
+}
+
+/**
+ * @brief Returns an appropriate k value to use for a given game score disparity
+ */
+function determineK(teamOneScore, teamTwoScore) {
+  // Parameters
+  var buckets = [{lo: 0.00, hi: 0.25, k: 128}, // score of 0/13 to 3/13
+                 {lo: 0.25, hi: 0.50, k: 96},  // score of 4/13 to 6/13
+                 {lo: 0.50, hi: 0.75, k: 64},  // score of 7/13 to 9/13
+                 {lo: 0.75, hi: 1.00, k: 32}]; // score of 10/13 to 13/13
+  var defaultK = 32;
+  
+  var decisiveness = Math.min(teamOneScore, teamTwoScore) / Math.max(teamOneScore, teamTwoScore);
+  for (let i = 0; i < buckets.length; i++) {
+    if (inRange(decisiveness, buckets[i].lo, buckets[i].hi)) {
+      return buckets[i].k;
+    }
+  }
+  return defaultK;
+}
+
+/**
+ * @brief Updates the ELO for a given match of up to 5v5
+ */
+function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
                    teamTwoPlayers, teamTwoElos, teamTwoScore) {
   //Inputs
   var teamOnePlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A2:A6").getValues();
@@ -28,8 +58,9 @@ function updateMMR(teamOnePlayers, teamOneElos, teamOneScore,
   // Number of teams
   const n = 2;
   // Volatility factor
-  const k = 96;
+  const k = determineK(teamOneScore, teamTwoScore);
   
+  // Array to hold all players
   var players = [];
   
   // Find cumulative Elo and parse players
@@ -117,7 +148,7 @@ function updateMMR(teamOnePlayers, teamOneElos, teamOneScore,
       }
     }
   }
-  // DEBUG:
+  // FOR DEBUG:
   //Browser.msgBox("team1: "+players[0].percEloWin+" "+players[1].percEloWin+" "+players[2].percEloWin+" "+players[3].percEloWin+" "+players[4].percEloWin)
   
   // Compute Elo as overall teams
@@ -132,8 +163,6 @@ function updateMMR(teamOnePlayers, teamOneElos, teamOneScore,
   const ea = 1 / (1 + Math.pow(10, (teamTwoElo - teamOneElo) / 400));
   var teamOneEloChange = Math.round(k * (s - ea));
   var teamTwoEloChange = -teamOneEloChange;
-  
-  Browser.msgBox(teamOneEloChange);
   
   // Update elos of team members according to elo responsibility
   for (let i = 0; i < teamOneSize; i++) {
