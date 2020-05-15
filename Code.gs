@@ -1,7 +1,7 @@
 /**
  * @file Code.gs
  *
- * @brief Custom scripts to create competitive tracking environment
+ * @brief Custom script to create competitive skill tracking environment for custom Valorant games
  *
  * @date 14 May 2020
  *
@@ -80,7 +80,7 @@ function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
     if (teamOnePlayers[i] != "") {
       teamOneSize++;
       teamOneElo += teamOneElos[i];
-      players.push({team: 1, name: teamOnePlayers[i], elo: teamOneElos[i], percEloLose: 0, percEloWin: 0});
+      players.push({team: 1, name: teamOnePlayers[i], preElo: teamOneElos[i], postElo: teamOneElos[i], percEloLose: 0, percEloWin: 0});
     }
   }
   var teamTwoSize = 0;
@@ -89,17 +89,17 @@ function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
     if (teamTwoPlayers[i] != "") {
       teamTwoSize++;
       teamTwoElo += teamTwoElos[i];
-      players.push({team: 2, name: teamTwoPlayers[i], elo: teamTwoElos[i], percEloLose: 0, percEloWin: 0});
+      players.push({team: 2, name: teamTwoPlayers[i], preElo: teamTwoElos[i], postElo: teamOneElos[i], percEloLose: 0, percEloWin: 0});
     }
   }
   
   // Find elo responsibility of individual team members in the case of losing
   for (let i = 0; i < teamOneSize; i++) {
-    players[i].percEloLose = 100 * players[i].elo / teamOneElo;
+    players[i].percEloLose = 100 * players[i].preElo / teamOneElo;
   }
   
   for (let i = teamOneSize; i < teamOneSize+teamTwoSize; i++) {
-    players[i].percEloLose = 100 * players[i].elo / teamTwoElo;
+    players[i].percEloLose = 100 * players[i].preElo / teamTwoElo;
   }
   
   // Find elo responsibility of individual team members in the case of winning
@@ -107,7 +107,7 @@ function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
   var accumPerc = 0;
   var accumPlayers = 0;
   for (let i = 0; i < teamOneSize; i++) {
-    if((i+1 < teamOneSize) && players[i].elo == players[i+1].elo) {
+    if((i+1 < teamOneSize) && players[i].preElo == players[i+1].preElo) {
       // Multiple players with same elo, so accumulate opposing responsibility
       accumPerc += players[teamOneSize-i-1].percEloLose;
       accumPlayers++;
@@ -134,7 +134,7 @@ function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
   accumPerc = 0;
   accumPlayers = 0;
   for (let i = teamOneSize; i < teamOneSize+teamTwoSize; i++) {
-    if((i+1 < teamOneSize+teamTwoSize) && players[i].elo == players[i+1].elo) {
+    if((i+1 < teamOneSize+teamTwoSize) && players[i].preElo == players[i+1].preElo) {
       // Multiple players with same elo, so accumulate opposing responsibility
       accumPerc += players[teamOneSize+teamTwoSize-i-1].percEloLose;
       accumPlayers++;
@@ -176,54 +176,119 @@ function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
   
   // Update elos of team members according to elo responsibility
   for (let i = 0; i < teamOneSize; i++) {
-    players[i].elo += 0.01*teamOneEloChange*(s*players[i].percEloWin+(1-s)*players[i].percEloLose);
+    players[i].postElo += 0.01*teamOneEloChange*(s*players[i].percEloWin+(1-s)*players[i].percEloLose);
   }
   for (let i = teamOneSize; i < teamOneSize+teamTwoSize; i++) {
-    players[i].elo += 0.01*teamTwoEloChange*((1-s)*players[i].percEloWin+s*players[i].percEloLose);
+    players[i].postElo += 0.01*teamTwoEloChange*((1-s)*players[i].percEloWin+s*players[i].percEloLose);
   }
   
   // Update spreadsheet
-  var sheet = SpreadsheetApp.getActiveSheet();
   if (teamOneSize >= 1) {
     var range = SpreadsheetApp.getActiveSpreadsheet().getRange("B21");
-    range.setValue(players[0].elo);
-  }
-  if (teamOneSize >= 2) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("B22");
-    range.setValue(players[1].elo);
-  }
-  if (teamOneSize >= 3) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("B23");
-    range.setValue(players[2].elo);
-  }
-  if (teamOneSize >= 4) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("B24");
-    range.setValue(players[3].elo);
-  }
-  if (teamOneSize == 5) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("B25");
-    range.setValue(players[4].elo);
-  }
-  
+    range.setValue(players[0].preElo);
+
+    if (teamOneSize >= 2) {
+      range = SpreadsheetApp.getActiveSpreadsheet().getRange("B22");
+      range.setValue(players[1].preElo);
+
+      if (teamOneSize >= 3) {
+        range = SpreadsheetApp.getActiveSpreadsheet().getRange("B23");
+        range.setValue(players[2].preElo);
+
+        if (teamOneSize >= 4) {
+          range = SpreadsheetApp.getActiveSpreadsheet().getRange("B24");
+          range.setValue(players[3].preElo);
+        
+          if (teamOneSize == 5) {
+            range = SpreadsheetApp.getActiveSpreadsheet().getRange("B25");
+            range.setValue(players[4].preElo);
+          }
+        }
+      }
+    }
+  } 
   if (teamTwoSize >= 1) {
     var range = SpreadsheetApp.getActiveSpreadsheet().getRange("D21");
-    range.setValue(players[teamOneSize].elo);
+    range.setValue(players[teamOneSize].preElo);
+
+    if (teamTwoSize >= 2) {
+      range = SpreadsheetApp.getActiveSpreadsheet().getRange("D22");
+      range.setValue(players[teamOneSize+1].preElo);
+    
+      if (teamTwoSize >= 3) {
+        range = SpreadsheetApp.getActiveSpreadsheet().getRange("D23");
+        range.setValue(players[teamOneSize+2].preElo);
+
+        if (teamTwoSize >= 4) {
+          range = SpreadsheetApp.getActiveSpreadsheet().getRange("D24");
+          range.setValue(players[teamOneSize+3].preElo);
+        
+          if (teamTwoSize == 5) {
+            range = SpreadsheetApp.getActiveSpreadsheet().getRange("D25");
+            range.setValue(players[teamOneSize+4].preElo);
+          }
+        }
+      }
+    }
   }
-  if (teamTwoSize >= 2) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("D22");
-    range.setValue(players[teamOneSize+1].elo);
-  }
-  if (teamTwoSize >= 3) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("D23");
-    range.setValue(players[teamOneSize+2].elo);
-  }
-  if (teamTwoSize >= 4) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("D24");
-    range.setValue(players[teamOneSize+3].elo);
-  }
-  if (teamTwoSize == 5) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getRange("D25");
-    range.setValue(players[teamOneSize+4].elo);
-  }
+
+  updateHistory(players, teamOneSize, teamTwoSize);
   return;
+}
+
+/**
+ * @brief Returns first row with blank cell in column A
+ */
+function getFirstEmptyRow() {
+  var spr = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Match History");
+  var column = spr.getRange('A:A');
+  var values = column.getValues(); // get all data in one call
+  var ct = 0;
+  while ( values[ct][0] != "" ) {
+    ct++;
+  }
+  return (ct+1);
+}
+
+function updateHistory(players, teamOneSize, teamTwoSize) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Match History");
+
+  // Write player names
+  if (teamOneSize >= 1) {
+    sheet.getRange("B"+getFirstEmptyRow()).setValue(players[0].name);
+    if (teamOneSize >= 2) {
+      sheet.getRange("F"+getFirstEmptyRow()).setValue(players[1].name);
+      if (teamOneSize >= 3) {
+        sheet.getRange("J"+getFirstEmptyRow()).setValue(players[2].name);
+        if (teamOneSize >= 4) {
+          sheet.getRange("N"+getFirstEmptyRow()).setValue(players[3].name);
+          if (teamOneSize == 5) {
+            sheet.getRange("R"+getFirstEmptyRow()).setValue(players[4].name);
+      
+          }
+        }
+      }
+    }
+  }
+  if (teamTwoSize >= 1) {
+    sheet.getRange("V"+getFirstEmptyRow()).setValue(players[teamOneSize].name);
+    if (teamTwoSize >= 2) {
+      sheet.getRange("Z"+getFirstEmptyRow()).setValue(players[teamOneSize+1].name);
+      if (teamTwoSize >= 3) {
+        sheet.getRange("AD"+getFirstEmptyRow()).setValue(players[teamOneSize+2].name);
+        if (teamTwoSize >= 4) {
+          sheet.getRange("AH"+getFirstEmptyRow()).setValue(players[teamOneSize+3].name);
+          if (teamTwoSize == 5) {
+            sheet.getRange("AL"+getFirstEmptyRow()).setValue(players[teamOneSize+4].name);
+      
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function balanceTeams() {
+  //Browser.msgBox("Hi "+getFirstEmptyRow());
 }
