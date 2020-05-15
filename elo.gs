@@ -1,5 +1,5 @@
 /**
- * @file Code.gs
+ * @file elo.gs
  *
  * @brief Custom script to create competitive skill tracking environment for custom Valorant games
  *
@@ -22,19 +22,6 @@
  * You should have received a copy of the GNU Affero General Public License            
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-/**
- * @brief Determines if an input number is between two other given numbers
- * 
- * @param num     Number to check if it is in a given range
- * @param lo      Lower bound of the range
- * @param hi      Upper bound of the range
- * 
- * @returns boolean value of whether or not num is between lo and hi (inclusive)       
- */
-function inRange(num, lo, hi) {
-  return (num >= lo) && (num <= hi);
-}
 
 /**
  * @brief Returns an appropriate k value to use for a given game score disparity
