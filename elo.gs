@@ -392,6 +392,31 @@ function revertGame() {
 }
 
 function balanceTeams() {
-  // @todo add balance team functionality
-  //Browser.msgBox("Hi "+getFirstEmptyRow());
+  // Collect tuples of (player name, player elo)
+  var teamOnePlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A12:A16").getValues();
+  var teamOneElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B12:B16").getValues();
+  var teamTwoPlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A21:A25").getValues();
+  var teamTwoElosRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("B21:B25").getValues();
+  var playersRaw = [];
+  for (let i = 0; i < teamOnePlayersRaw.length; i++) {
+    playersRaw.push({name: teamOnePlayersRaw[i][0], elo: teamOneElosRaw[i][0]});
+  }
+  for (let i = 0; i < teamTwoPlayersRaw.length; i++) {
+    playersRaw.push({name: teamTwoPlayersRaw[i][0], elo: teamTwoElosRaw[i][0]});
+  }
+
+  // Remove tuples with empty player names
+  var players = playersRaw.filter(function (value, index, array) {
+    return value.name != "";
+  });
+
+  var output = "";
+  for (let i = 0; i < players.length; i++) {
+    output += players[i].name + "<=>";
+  }
+  Browser.msgBox(output);
+
+  // Use greedy heuristic to balance teams
+  // Sort all players
+
 }
