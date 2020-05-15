@@ -38,8 +38,7 @@ function determineK(teamOneScore, teamTwoScore) {
 /**
  * @brief Updates the ELO for a given match of up to 5v5
  */
-function updateELO(teamOnePlayers, teamOneElos, teamOneScore,
-                   teamTwoPlayers, teamTwoElos, teamTwoScore) {
+function updateELO() {
   //Inputs
   var teamOnePlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getRange("A2:A6").getValues();
   var teamOnePlayers = [];
