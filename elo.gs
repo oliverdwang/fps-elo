@@ -289,6 +289,15 @@ function updateELO() {
   }
 
   updateHistory(players, teamOneScore, teamTwoScore, teamOneSize, teamTwoSize);
+
+  // Clear combat scores
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("C12:C16").clearContent();
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("C21:C25").clearContent();
+
+  // Clear rounds won
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("B18").clearContent();
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("B27").clearContent();
+
   return;
 }
 
@@ -394,14 +403,6 @@ function updateHistory(players, teamOneScore, teamTwoScore, teamOneSize, teamTwo
   sheet.getRange("AP"+firstEmptyRow).setValue(teamOneScore);
   sheet.getRange("AQ"+firstEmptyRow).setValue(teamTwoScore);
 
-  // Clear combat scores
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("C12:C16").clearContent();
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("C21:C25").clearContent();
-
-  // Clear rounds won
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("B18").clearContent();
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("B27").clearContent();
-
   return false;
 }
 
@@ -485,5 +486,16 @@ function balanceTeams() {
       }
     }
   }
-  // @todo clear new elo, combat score, rounds won
+  
+  // Clear combat scores
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("C12:C16").clearContent();
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("C21:C25").clearContent();
+
+  // Clear rounds won
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("B18").clearContent();
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("B27").clearContent();
+
+  // Clear new elo
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("B31:B35").clearContent();
+  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("D31:D35").clearContent();
 }
