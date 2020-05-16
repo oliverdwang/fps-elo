@@ -35,8 +35,8 @@ function determineK(teamOneScore, teamTwoScore) {
   // Parameters
   var buckets = [{lo: 0.00, hi: 0.25, k: 128}, // score of 0/13 to 3/13
                  {lo: 0.25, hi: 0.50, k: 96},  // score of 4/13 to 6/13
-                 {lo: 0.50, hi: 0.75, k: 64},  // score of 7/13 to 9/13
-                 {lo: 0.75, hi: 1.00, k: 32}]; // score of 10/13 to 13/13
+                 {lo: 0.50, hi: 0.80, k: 64},  // score of 7/13 to 10/13
+                 {lo: 0.80, hi: 1.00, k: 32}]; // score of 11/13 to 13/13
   var defaultK = 32;
   
   var decisiveness = Math.min(teamOneScore, teamTwoScore) / Math.max(teamOneScore, teamTwoScore);
@@ -97,17 +97,22 @@ function updateELO() {
 
   var teamTwoScore = SpreadsheetApp.getActiveSpreadsheet().getRange("B27").getValue();
 
-  Browser.msgBox(teamTwoPlayers[0]+" "+teamTwoPlayers[1]+" "+teamTwoPlayers[2]+" "+teamTwoPlayers[3]+" "+teamTwoPlayers[4]);
-  return;
+  // Put player statistics into player objects and unified array
+  var players = [];
+  for (let i = 0; i < teamOneSize; i++) {
+    players.push({name: teamOnePlayers[i], preElo: teamOneElos[i], postElo: teamOneElos[i],
+                  percEloLose: 0, percEloWin: 0, combatScore: teamOneCombatScores[i]});
+  }
+  for (let i = 0; i < teamTwoSize; i++) {
+    players.push({name: teamTwoPlayers[i], preElo: teamTwoElos[i], postElo: teamTwoElos[i],
+                  percEloLose: 0, percEloWin: 0, combatScore: teamTwoCombatScores[i]});
+  }
   
   // Elo computation variables
   // Number of teams
   const n = 2;
   // Volatility factor
   const k = determineK(teamOneScore, teamTwoScore);
-  
-  // Array to hold all players
-  var players = [];
   
   // Find elo responsibility of individual team members in the case of losing
   for (let i = 0; i < teamOneSize; i++) {
@@ -269,6 +274,10 @@ function updateELO() {
 
   updateHistory(players, teamOneScore, teamTwoScore, teamOneSize, teamTwoSize);
   return;
+}
+
+function determineEloResponsibility() {
+
 }
 
 /**
