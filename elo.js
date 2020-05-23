@@ -49,26 +49,6 @@ function determineK(teamOneScore, teamTwoScore) {
 }
 
 /**
- * @brief Finds row of player matching name given
- * 
- * @param playerName    Name of player to find
- * 
- * @returns Row of player if found, and -1 if not found 
- */
-function getPlayerRow(playerName) {
-  // Iterate through each player
-  var playerListRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Players").getRange("B2:B99").getValues();
-  var row;
-  for (row = 0; playerListRaw[row][0] != ""; row++) {
-    if (playerListRaw[row][0] == playerName) {
-      // Found matching name, so update respective elo
-      return Number(row+2);
-    }
-  }
-  return -1;
-}
-
-/**
  * @brief Updates the ELO for a given match of up to 5v5
  */
 function updateELO() {
@@ -290,35 +270,10 @@ function updateELO() {
 
   updateHistory(players, teamOneScore, teamTwoScore, teamOneSize, teamTwoSize);
 
-  // Clear combat scores
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("C12:C16").clearContent();
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("C21:C25").clearContent();
-
-  // Clear rounds won
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("B18").clearContent();
-  SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange("B27").clearContent();
+  clearCombatScores();
+  clearRoundsWon();
 
   return;
-}
-
-function determineEloResponsibility() {
-  // @todo :(
-}
-
-/**
- * @brief Finds the first row with blank cell in timestamp column
- * 
- * @returns Row number that is empty
- */
-function getFirstEmptyRow() {
-  var spr = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Match History");
-  var column = spr.getRange('A:A');
-  var values = column.getValues(); // get all data in one call
-  var ct = 0;
-  while ( values[ct][0] != "" ) {
-    ct++;
-  }
-  return (ct+1);
 }
 
 /**
@@ -649,22 +604,4 @@ function balanceTeams() {
 
   // Clear new elo
   clearNewElos();
-}
-
-function clearCombatScores() {
-  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
-  addAMatchSheet.getRange("C12:C16").clearContent();
-  addAMatchSheet.getRange("C21:C25").clearContent();
-}
-
-function clearRoundsWon() {
-  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
-  addAMatchSheet.getRange("B18").clearContent();
-  addAMatchSheet.getRange("B27").clearContent();
-}
-
-function clearNewElos() {
-  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
-  addAMatchSheet.getRange("B31:B35").clearContent();
-  addAMatchSheet.getRange("D31:D35").clearContent();
 }
