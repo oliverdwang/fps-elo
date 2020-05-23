@@ -426,7 +426,7 @@ function revertGame() {
     // Revert team 1 player 1 if present
     // T1P1 Name = Column B = index 1
     if (gameData[1] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[1]);
       if (playerRow > 0) {
         // Revert elo
         // T1P1 preELO = Row C = index 2
@@ -439,7 +439,7 @@ function revertGame() {
     // Revert team 1 player 2 if present
     // T1P2 Name = Column F = index 5
     if (gameData[5] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[5]);
       if (playerRow > 0) {
         // Revert elo
         // T1P1 preELO = Row G = index 6
@@ -452,7 +452,7 @@ function revertGame() {
     // Revert team 1 player 3 if present
     // T1P3 Name = Column J = index 9
     if (gameData[9] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[9]);
       if (playerRow > 0) {
         // Revert elo
         // T1P3 preELO = Row K = index 10
@@ -465,7 +465,7 @@ function revertGame() {
     // Revert team 1 player 4 if present
     // T1P4 Name = Column N = index 13
     if (gameData[13] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[13]);
       if (playerRow > 0) {
         // Revert elo
         // T1P4 preELO = Row O = index 14
@@ -478,7 +478,7 @@ function revertGame() {
     // Revert team 1 player 5 if present
     // T1P5 Name = Column R = index 17
     if (gameData[17] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[17]);
       if (playerRow > 0) {
         // Revert elo
         // T1P5 preELO = Row S = index 18
@@ -491,7 +491,7 @@ function revertGame() {
     // Revert team 2 player 1 if present
     // T2P1 Name = Column V = index 21
     if (gameData[21] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[21]);
       if (playerRow > 0) {
         // Revert elo
         // T2P1 preELO = Row W = index 22
@@ -504,7 +504,7 @@ function revertGame() {
     // Revert team 2 player 2 if present
     // T2P2 Name = Column Z = index 25
     if (gameData[25] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[25]);
       if (playerRow > 0) {
         // Revert elo
         // T2P2 preELO = Row AA = index 26
@@ -517,7 +517,7 @@ function revertGame() {
     // Revert team 2 player 3 if present
     // T2P3 Name = Column AD = index 29
     if (gameData[29] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[29]);
       if (playerRow > 0) {
         // Revert elo
         // T2P3 preELO = Row AE = index 30
@@ -530,7 +530,7 @@ function revertGame() {
     // Revert team 2 player 4 if present
     // T2P4 Name = Column AH = index 33
     if (gameData[33] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[33]);
       if (playerRow > 0) {
         // Revert elo
         // T2P4 preELO = Row AI = index 34
@@ -543,7 +543,7 @@ function revertGame() {
     // Revert team 2 player 5 if present
     // T2P5 Name = Column AL = index 37
     if (gameData[37] != "") {
-      var playerRow = getPlayerRow();
+      var playerRow = getPlayerRow(gameData[37]);
       if (playerRow > 0) {
         // Revert elo
         // T2P5 preELO = Row AM = index 38
@@ -553,6 +553,7 @@ function revertGame() {
         Browser.msgBox("Error: Match history is corrupted, player not found");
       }
     }
+    // Remove match from match history
   } else {
     // No match to remove
     Browser.msgBox("No matches to revert");
