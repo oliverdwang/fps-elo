@@ -1,0 +1,19 @@
+{
+  "timeZone": "America/Los_Angeles",
+  "dependencies": {
+  },
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "sheets": {
+    "macros": [{
+      "menuName": "sort 1",
+      "functionName": "sort1"
+    }, {
+      "menuName": "sortTeams",
+      "functionName": "sortTeams"
+    }, {
+      "menuName": "sortTeams 1",
+      "functionName": "sortTeams1"
+    }]
+  }
+}
