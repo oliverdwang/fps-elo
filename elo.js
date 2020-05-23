@@ -425,12 +425,12 @@ function revertGame() {
     // @todo abstract the following into function calls
     // Revert team 1 player 1 if present
     // T1P1 Name = Column B = index 1
-    if (gameData[1] != "") {
-      var playerRow = getPlayerRow(gameData[1]);
+    if (gameData[0][1] != "") {
+      var playerRow = getPlayerRow(gameData[0][1]);
       if (playerRow > 0) {
         // Revert elo
         // T1P1 preELO = Row C = index 2
-        playersSheet.getRange("C"+playerRow).setValue(gameData[2]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][2]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
@@ -438,12 +438,12 @@ function revertGame() {
     }
     // Revert team 1 player 2 if present
     // T1P2 Name = Column F = index 5
-    if (gameData[5] != "") {
-      var playerRow = getPlayerRow(gameData[5]);
+    if (gameData[0][5] != "") {
+      var playerRow = getPlayerRow(gameData[0][5]);
       if (playerRow > 0) {
         // Revert elo
         // T1P1 preELO = Row G = index 6
-        playersSheet.getRange("C"+playerRow).setValue(gateData[6]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][6]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
@@ -451,12 +451,12 @@ function revertGame() {
     }
     // Revert team 1 player 3 if present
     // T1P3 Name = Column J = index 9
-    if (gameData[9] != "") {
-      var playerRow = getPlayerRow(gameData[9]);
+    if (gameData[0][9] != "") {
+      var playerRow = getPlayerRow(gameData[0][9]);
       if (playerRow > 0) {
         // Revert elo
         // T1P3 preELO = Row K = index 10
-        playersSheet.getRange("C"+playerRow).setValue(gameData[10]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][10]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
@@ -464,12 +464,12 @@ function revertGame() {
     }
     // Revert team 1 player 4 if present
     // T1P4 Name = Column N = index 13
-    if (gameData[13] != "") {
-      var playerRow = getPlayerRow(gameData[13]);
+    if (gameData[0][13] != "") {
+      var playerRow = getPlayerRow(gameData[0][13]);
       if (playerRow > 0) {
         // Revert elo
         // T1P4 preELO = Row O = index 14
-        playersSheet.getRange("C"+playerRow).setValue(gameData[14]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][14]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
@@ -477,12 +477,12 @@ function revertGame() {
     }
     // Revert team 1 player 5 if present
     // T1P5 Name = Column R = index 17
-    if (gameData[17] != "") {
-      var playerRow = getPlayerRow(gameData[17]);
+    if (gameData[0][17] != "") {
+      var playerRow = getPlayerRow(gameData[0][17]);
       if (playerRow > 0) {
         // Revert elo
         // T1P5 preELO = Row S = index 18
-        playersSheet.getRange("C"+playerRow).setValue(gameData[18]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][18]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
@@ -490,12 +490,12 @@ function revertGame() {
     }
     // Revert team 2 player 1 if present
     // T2P1 Name = Column V = index 21
-    if (gameData[21] != "") {
-      var playerRow = getPlayerRow(gameData[21]);
+    if (gameData[0][21] != "") {
+      var playerRow = getPlayerRow(gameData[0][21]);
       if (playerRow > 0) {
         // Revert elo
         // T2P1 preELO = Row W = index 22
-        playersSheet.getRange("C"+playerRow).setValue(gameData[22]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][22]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
@@ -503,12 +503,12 @@ function revertGame() {
     }
     // Revert team 2 player 2 if present
     // T2P2 Name = Column Z = index 25
-    if (gameData[25] != "") {
-      var playerRow = getPlayerRow(gameData[25]);
+    if (gameData[0][25] != "") {
+      var playerRow = getPlayerRow(gameData[0][25]);
       if (playerRow > 0) {
         // Revert elo
         // T2P2 preELO = Row AA = index 26
-        playersSheet.getRange("C"+playerRow).setValue(gameData[26]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][26]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
@@ -516,12 +516,12 @@ function revertGame() {
     }
     // Revert team 2 player 3 if present
     // T2P3 Name = Column AD = index 29
-    if (gameData[29] != "") {
-      var playerRow = getPlayerRow(gameData[29]);
+    if (gameData[0][29] != "") {
+      var playerRow = getPlayerRow(gameData[0][29]);
       if (playerRow > 0) {
         // Revert elo
         // T2P3 preELO = Row AE = index 30
-        playersSheet.getRange("C"+playerRow).setValue(gameData[30]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][30]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
@@ -529,12 +529,12 @@ function revertGame() {
     }
     // Revert team 2 player 4 if present
     // T2P4 Name = Column AH = index 33
-    if (gameData[33] != "") {
-      var playerRow = getPlayerRow(gameData[33]);
+    if (gameData[0][33] != "") {
+      var playerRow = getPlayerRow(gameData[0][33]);
       if (playerRow > 0) {
         // Revert elo
         // T2P4 preELO = Row AI = index 34
-        playersSheet.getRange("C"+playerRow).setValue(gameData[34]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][34]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
@@ -542,18 +542,22 @@ function revertGame() {
     }
     // Revert team 2 player 5 if present
     // T2P5 Name = Column AL = index 37
-    if (gameData[37] != "") {
-      var playerRow = getPlayerRow(gameData[37]);
+    if (gameData[0][37] != "") {
+      var playerRow = getPlayerRow(gameData[0][37]);
       if (playerRow > 0) {
         // Revert elo
         // T2P5 preELO = Row AM = index 38
-        playersSheet.getRange("C"+playerRow).setValue(gameData[38]);
+        playersSheet.getRange("C"+playerRow).setValue(gameData[0][38]);
       } else {
         // Player not found
         Browser.msgBox("Error: Match history is corrupted, player not found");
       }
     }
     // Remove match from match history
+    gameRange.clearContent();
+    clearCombatScores();
+    clearRoundsWon();
+    clearNewElos();
   } else {
     // No match to remove
     Browser.msgBox("No matches to revert");
@@ -638,14 +642,29 @@ function balanceTeams() {
   }
   
   // Clear combat scores
-  addAMatchSheet.getRange("C12:C16").clearContent();
-  addAMatchSheet.getRange("C21:C25").clearContent();
+  clearCombatScores();
 
   // Clear rounds won
-  addAMatchSheet.getRange("B18").clearContent();
-  addAMatchSheet.getRange("B27").clearContent();
+  clearRoundsWon();
 
   // Clear new elo
+  clearNewElos();
+}
+
+function clearCombatScores() {
+  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
+  addAMatchSheet.getRange("C12:C16").clearContent();
+  addAMatchSheet.getRange("C21:C25").clearContent();
+}
+
+function clearRoundsWon() {
+  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
+  addAMatchSheet.getRange("B18").clearContent();
+  addAMatchSheet.getRange("B27").clearContent();
+}
+
+function clearNewElos() {
+  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
   addAMatchSheet.getRange("B31:B35").clearContent();
   addAMatchSheet.getRange("D31:D35").clearContent();
 }
