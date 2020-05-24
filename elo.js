@@ -563,6 +563,7 @@ function balanceTeams() {
   // Add possible team configurations to Team Selection sheet
   var teamSelectionSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Team Selection");
   var outputRange = teamSelectionSheet.getRange(teamSelectionOutputRange);
+  // Output 2D array needs to match range size
   var output = new Array(teamSelNumRows).fill("").map(() => new Array(teamSelNumCols).fill(""));
 
   // Iterate through team configurations
