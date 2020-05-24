@@ -1,9 +1,7 @@
 function sortTeams() {
-  var spreadsheet = SpreadsheetApp.getActive();
-  spreadsheet.getRange('2:6').activate()
-  .sort({column: 2, ascending: true});
-  spreadsheet.getRange('9:13').activate()
-  .sort({column: 2, ascending: true});
+  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
+  addAMatchSheet.getRange('12:16').sort({column: 2, ascending: true});
+  addAMatchSheet.getRange('21:25').sort({column: 2, ascending: true});
 };
 
 function sortPlayers() {

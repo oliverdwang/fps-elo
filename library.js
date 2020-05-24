@@ -87,8 +87,9 @@ function getPossibleTeams(players) {
       }
       // Check if team IDs are already in the results array
       for (let i = 0; i < result.length; i++) {
-        if (result[i].teamOne.id == teamOneId ||
-            result[i].teamTwo.id == teamTwoId) {
+        if (result[i].teamOne.id == teamOneId || // If team 1 ID matches
+            result[i].teamTwo.id == teamTwoId || // If team 2 ID matches
+            result[i].teamOne.id == teamTwoId) { // If teams are swapped
             // Duplicate found, so don't bother adding to the results
             return;
         }

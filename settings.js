@@ -46,13 +46,10 @@ var teamTwoNewElosRange = ["D31","D32","D33","D34","D35"];
 /* Team Selection Display */
 var teamSelectionNumOptions = 10;
 // Note: Updating numOptions does not update the surrounding user interface
-var teamSelectionOutputRange = "B11:D87"
+var teamOneSelOutputRange = "B10:B88";
+var teamTwoSelOutputRange = "D10:D88";
 // Note: Recommended to keep as small as possible for performance reasons
-var teamSelNumRows = 77;
-var teamSelNumCols = 3;
-var teamSelectionPlayersRowOffset = 0;
-var teamSelectionTeamOnePlayersColOffset = 0;
-// Note: Location of first team 1 player input, relative to top left cell in teamSelectionOutputRange
-var teamSelectionTeamTwoPlayersColOffset = 2;
-// Note: Location of first team 2 player input, relative to top left cell in teamSelectionOutputRange
+// Note: Must start with a double digit row, and single letter column
+var teamSelNumRows = 79;
+var teamSelectionPlayersRowOffset = 1;
 var teamSelectionOptionRowSpacing = 8;
