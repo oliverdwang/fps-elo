@@ -136,7 +136,6 @@ function selectTeams() {
   clearNewElos();
 
   // Sort players in terms of elo
-  SpreadsheetApp.getActiveSpreadsheet().setActiveSheet(addAMatchSheet);
   addAMatchSheet.getRange('12:16').sort({column: 2, ascending: true});
   addAMatchSheet.getRange('21:25').sort({column: 2, ascending: true});
 }
