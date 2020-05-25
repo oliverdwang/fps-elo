@@ -61,6 +61,7 @@ var teamTwoCombatScoresRange = {strCol: "C", strRow: 21,
 var teamTwoRoundsWonRange = {col: "B", row: 27,
                              toString: function() {return this.col+this.row;}};
 
+<<<<<<< HEAD
 /* Quick View Data Ranges*/
 var teamOneNewElosRange = {strCol: "B", strRow: 31,
                            stpCol: "B", stpRow: 35,
@@ -72,6 +73,11 @@ var teamTwoNewElosRange = {strCol: "D", strRow: 31,
                            toString: function() {
                              return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
                            }};
+=======
+/* Quick View Data Ranges */
+var teamOneNewElosRange = ["B31","B32","B33","B34","B35"];
+var teamTwoNewElosRange = ["D31","D32","D33","D34","D35"];
+>>>>>>> 21fe50ba578695d22454f9e774abcc50a436513b
 
 /* Team Selection Display */
 var teamSelectionNumOptions = 10;
@@ -91,6 +97,7 @@ var teamSelNumRows = 79;
 var teamSelectionPlayersRowOffset = 1;
 var teamSelectionOptionRowSpacing = 8;
 
+<<<<<<< HEAD
 /* Match History Data Ranges */
 var matchHistGameInfoCols = {timestampCol:        'A',
                              teamOneRoundsWonCol: 'AP',
@@ -135,3 +142,15 @@ var matchHistTeamTwoCols = [{nameCol:        'V',  // Player 1
                              preEloCol:      'AM',
                              combatScoreCol: 'AN',
                              postEloCol:     'AO'}];
+=======
+/* Elo Algorithm */
+var responsibilityFactor = 11;
+// Note: The higher the factor, the higher score that higher elo players are expected to score and
+//       the smaller the score that lower elo players are expected to score in a given game.
+//       Recommended to use 11 as the reponsibility factor for Valorant games.
+var outperformThreshold = 200;
+// Note: Number of combat points over expected needed to cancel out any base elo responsibility
+// Ex: If a team of 5 is responsible for -25 elo change,  then each player will have a base elo
+//     responsiblity of -5. If a player scores 200 combat points above expected, then they don't
+//     lose any points, and can gain points despite loss
+>>>>>>> 21fe50ba578695d22454f9e774abcc50a436513b
