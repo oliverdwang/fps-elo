@@ -54,6 +54,11 @@ function determineK(teamOneScore, teamTwoScore) {
 function updateELO() {
   var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
   var playersSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Players");
+
+  // Sort players in terms of elo
+  addAMatchSheet.getRange('12:16').sort({column: 2, ascending: true});
+  addAMatchSheet.getRange('21:25').sort({column: 2, ascending: true});
+
   //Inputs
   var teamOnePlayersRaw = addAMatchSheet.getRange(teamOnePlayersRange).getValues();
   var teamOneElosRaw = addAMatchSheet.getRange(teamOneElosRange).getValues();
@@ -134,7 +139,6 @@ function updateELO() {
                   expectedCombatScore: 0,
                   deltaCombatScore: 0});
   }
-
   // Calculate combat score metrics
   for (let i = 0; i < teamOneSize; i++) {
     players[i].expectedCombatScore = teamOneCombatScore * players[i].weightedPercentile / teamOneTotalWeightedPercentile;
