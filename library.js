@@ -123,8 +123,8 @@ function getPossibleTeams(players) {
  */
 function clearCombatScores() {
   var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
-  addAMatchSheet.getRange("C12:C16").clearContent();
-  addAMatchSheet.getRange("C21:C25").clearContent();
+  addAMatchSheet.getRange(teamOneCombatScoresRange.toString()).clearContent();
+  addAMatchSheet.getRange(teamTwoCombatScoresRange.toString()).clearContent();
 }
 
 /**
@@ -132,8 +132,8 @@ function clearCombatScores() {
  */
 function clearRoundsWon() {
   var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
-  addAMatchSheet.getRange("B18").clearContent();
-  addAMatchSheet.getRange("B27").clearContent();
+  addAMatchSheet.getRange(teamOneRoundsWonRange.toString()).clearContent();
+  addAMatchSheet.getRange(teamTwoRoundsWonRange.toString()).clearContent();
 }
 
 /**
@@ -141,8 +141,8 @@ function clearRoundsWon() {
  */
 function clearNewElos() {
   var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
-  addAMatchSheet.getRange("B31:B35").clearContent();
-  addAMatchSheet.getRange("D31:D35").clearContent();
+  addAMatchSheet.getRange(teamOneNewElosRange.toString()).clearContent();
+  addAMatchSheet.getRange(teamTwoNewElosRange.toString()).clearContent();
 }
 
 /**

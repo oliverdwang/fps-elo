@@ -24,32 +24,114 @@
 */
 
 /* Team 1 Input Data Ranges */
-var teamOnePlayersRange = "A12:A16";
-var teamOneElosRange = "B12:B16";
-var teamOneCombatScoresRange = "C12:C16";
-var teamOneRoundsWonRange = "B18";
-var teamOnePlayerRange = ["A12","A13","A14","A15","A16"];
-// Note: teamOnePlayerRange is just teamOnePlayersRange but explicitly states each cell in an array
+var teamOneNamesRange = {strCol: "A", strRow: 12,
+                         stpCol: "A", stpRow: 16,
+                         toString: function() {
+                           return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                         }};
+var teamOneElosRange = {strCol: "B", strRow: 12,
+                        stpCol: "B", stpRow: 16,
+                        toString: function() {
+                          return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                        }};
+var teamOneCombatScoresRange = {strCol: "C", strRow: 12,
+                                stpCol: "C", stpRow: 16,
+                                toString: function() {
+                                  return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                                }};
+var teamOneRoundsWonRange = {col: "B", row: 18,
+                             toString: function() {return this.col+this.row;}};
 
 /* Team 2 Input Data Ranges */
-var teamTwoPlayersRange = "A21:A25";
-var teamTwoElosRange = "B21:B25";
-var teamTwoCombatScoresRange = "C21:C25";
-var teamTwoRoundsWonRange = "B27";
-var teamTwoPlayerRange = ["A21","A22","A23","A24","A25"];
-// Note: teamTwoPlayerRange is just teamTwoPlayersRange but explicitly states each cell in an array
+var teamTwoNamesRange = {strCol: "A", strRow: 21,
+                         stpCol: "A", stpRow: 25,
+                         toString: function() {
+                           return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                         }};
+var teamTwoElosRange = {strCol: "B", strRow: 21,
+                        stpCol: "B", stpRow: 25,
+                        toString: function() {
+                          return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                        }};
+var teamTwoCombatScoresRange = {strCol: "C", strRow: 21,
+                                stpCol: "C", stpRow: 25,
+                                toString: function() {
+                                  return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                                }};
+var teamTwoRoundsWonRange = {col: "B", row: 27,
+                             toString: function() {return this.col+this.row;}};
 
 /* Quick View Data Ranges*/
-var teamOneNewElosRange = ["B31","B32","B33","B34","B35"];
-var teamTwoNewElosRange = ["D31","D32","D33","D34","D35"];
+var teamOneNewElosRange = {strCol: "B", strRow: 31,
+                           stpCol: "B", stpRow: 35,
+                           toString: function() {
+                             return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                           }};
+var teamTwoNewElosRange = {strCol: "D", strRow: 31,
+                           stpCol: "D", stpRow: 35,
+                           toString: function() {
+                             return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                           }};
 
 /* Team Selection Display */
 var teamSelectionNumOptions = 10;
 // Note: Updating numOptions does not update the surrounding user interface
-var teamOneSelOutputRange = "B10:B88";
-var teamTwoSelOutputRange = "D10:D88";
+var teamOneSelOutputRange = {strCol: "B", strRow: 10,
+                             stpCol: "B", stpRow: 88,
+                             toString: function() {
+                               return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                             }};
+var teamTwoSelOutputRange = {strCol: "D", strRow: 10,
+                             stpCol: "D", stpRow: 88,
+                             toString: function() {
+                               return this.strCol+this.strRow+":"+this.stpCol+this.stpRow;
+                             }};
 // Note: Recommended to keep as small as possible for performance reasons
-// Note: Must start with a double digit row, and single letter column
 var teamSelNumRows = 79;
 var teamSelectionPlayersRowOffset = 1;
 var teamSelectionOptionRowSpacing = 8;
+
+/* Match History Data Ranges */
+var matchHistGameInfoCols = {timestampCol:        'A',
+                             teamOneRoundsWonCol: 'AP',
+                             teamTwoRoundsWonCol: 'AQ'};
+var matchHistTeamOneCols = [{nameCol:        'B',  // Player 1
+                             preEloCol:      'C',
+                             combatScoreCol: 'D',
+                             postEloCol:     'E'},
+                            {nameCol:        'F',  // Player 2
+                             preEloCol:      'G',
+                             combatScoreCol: 'H',
+                             postEloCol:     'I'},
+                            {nameCol:        'J',  // Player 3
+                             preEloCol:      'K',
+                             combatScoreCol: 'L',
+                             postEloCol:     'M'},
+                            {nameCol:        'N',  // Player 4
+                             preEloCol:      'O',
+                             combatScoreCol: 'P',
+                             postEloCol:     'Q'},
+                            {nameCol:        'R',  // Player 5
+                             preEloCol:      'S',
+                             combatScoreCol: 'T',
+                             postEloCol:     'U'}];
+var matchHistTeamTwoCols = [{nameCol:        'V',  // Player 1
+                             preEloCol:      'W',
+                             combatScoreCol: 'X',
+                             postEloCol:     'Y'},
+                            {nameCol:        'Z',  // Player 2
+                             preEloCol:      'AA',
+                             combatScoreCol: 'AB',
+                             postEloCol:     'AC'},
+                            {nameCol:        'AD',  // Player 3
+                             preEloCol:      'AE',
+                             combatScoreCol: 'AF',
+                             postEloCol:     'AG'},
+                            {nameCol:        'AH',  // Player 4
+                             preEloCol:      'AI',
+                             combatScoreCol: 'AJ',
+                             postEloCol:     'AK'},
+                            {nameCol:        'AL',  // Player 5
+                             preEloCol:      'AM',
+                             combatScoreCol: 'AN',
+                             postEloCol:     'AO'}];

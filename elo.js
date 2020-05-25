@@ -26,12 +26,12 @@
 /**
  * @brief Returns an appropriate k value to use for a given game score disparity
  * 
- * @param teamOneScore  Number of rounds won by team one
- * @param teamTwoScore  Number of rounds won by team two
+ * @param teamOneRoundsWon  Number of rounds won by team one
+ * @param teamTwoRoundsWon  Number of rounds won by team two
  * 
  * @returns k value to use for elo based ranking point adjustments
  */
-function determineK(teamOneScore, teamTwoScore) {
+function determineK(teamOneRoundsWon, teamTwoRoundsWon) {
   // Parameters
   var buckets = [{lo: 0.00, hi: 0.25, k: 128}, // score of 0/13 to 3/13
                  {lo: 0.25, hi: 0.50, k: 96},  // score of 4/13 to 6/13
@@ -39,7 +39,7 @@ function determineK(teamOneScore, teamTwoScore) {
                  {lo: 0.80, hi: 1.00, k: 32}]; // score of 11/13 to 13/13
   var defaultK = 32;
   
-  var decisiveness = Math.min(teamOneScore, teamTwoScore) / Math.max(teamOneScore, teamTwoScore);
+  var decisiveness = Math.min(teamOneRoundsWon, teamTwoRoundsWon) / Math.max(teamOneRoundsWon, teamTwoRoundsWon);
   for (let i = 0; i < buckets.length; i++) {
     if (inRange(decisiveness, buckets[i].lo, buckets[i].hi)) {
       return buckets[i].k;
@@ -52,10 +52,14 @@ function determineK(teamOneScore, teamTwoScore) {
  * @brief Updates the ELO for a given match of up to 5v5
  */
 function updateELO() {
+  // Sort players in terms of elo
+  addAMatchSheet.getRange(teamOneNamesRange.strRow+":"+teamOneNamesRange.stpRow).sort({column: 2, ascending: true});
+  addAMatchSheet.getRange(teamTwoNamesRange.strRow+":"+teamTwoNamesRange.stpRow).sort({column: 2, ascending: true});
   //Inputs
-  var teamOnePlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOnePlayersRange).getValues();
-  var teamOneElosRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneElosRange).getValues();
-  var teamOneCombatScoresRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneCombatScoresRange).getValues();
+  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
+  var teamOnePlayersRaw = addAMatchSheet.getRange(teamOneNamesRange.toString()).getValues();
+  var teamOneElosRaw = addAMatchSheet.getRange(teamOneElosRange.toString()).getValues();
+  var teamOneCombatScoresRaw = addAMatchSheet.getRange(teamOneCombatScoresRange.toString()).getValues();
   var teamOnePlayers = [];
   var teamOneElos = [];
   var teamOneCombatScores = [];
@@ -73,11 +77,11 @@ function updateELO() {
     }
   }
 
-  var teamOneScore = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneRoundsWonRange).getValue();
+  var teamOneRoundsWon = addAMatchSheet.getRange(teamOneRoundsWonRange.toString()).getValue();
 
-  var teamTwoPlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoPlayersRange).getValues();
-  var teamTwoElosRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoElosRange).getValues();
-  var teamTwoCombatScoresRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoCombatScoresRange).getValues();
+  var teamTwoPlayersRaw = addAMatchSheet.getRange(teamTwoNamesRange.toString()).getValues();
+  var teamTwoElosRaw = addAMatchSheet.getRange(teamTwoElosRange.toString()).getValues();
+  var teamTwoCombatScoresRaw = addAMatchSheet.getRange(teamTwoCombatScoresRange.toString()).getValues();
   var teamTwoPlayers = [];
   var teamTwoElos = [];
   var teamTwoCombatScores = [];
@@ -95,7 +99,7 @@ function updateELO() {
     }
   }
 
-  var teamTwoScore = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoRoundsWonRange).getValue();
+  var teamTwoRoundsWon = addAMatchSheet.getRange(teamTwoRoundsWonRange.toString()).getValue();
 
   // Put player statistics into player objects and unified array
   var players = [];
@@ -112,7 +116,7 @@ function updateELO() {
   // Number of teams
   const n = 2;
   // Volatility factor
-  const k = determineK(teamOneScore, teamTwoScore);
+  const k = determineK(teamOneRoundsWon, teamTwoRoundsWon);
   
   // Find elo responsibility of individual team members in the case of losing
   for (let i = 0; i < teamOneSize; i++) {
@@ -184,9 +188,9 @@ function updateELO() {
   
   // Compute Elo as overall teams
   let s = 9;
-  if (teamOneScore > teamTwoScore) {
+  if (teamOneRoundsWon > teamTwoRoundsWon) {
     s = 1;
-  } else if (teamOneScore < teamTwoScore) {
+  } else if (teamOneRoundsWon < teamTwoRoundsWon) {
     s = 0;
   } else {
     s = 0.5;
@@ -219,56 +223,18 @@ function updateELO() {
   }
   
   // Update spreadsheet for quick view
-  if (teamOneSize >= 1) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneNewElosRange[0]);
-    range.setValue(players[0].postElo);
-
-    if (teamOneSize >= 2) {
-      range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneNewElosRange[1]);
-      range.setValue(players[1].postElo);
-
-      if (teamOneSize >= 3) {
-        range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneNewElosRange[2]);
-        range.setValue(players[2].postElo);
-
-        if (teamOneSize >= 4) {
-          range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneNewElosRange[3]);
-          range.setValue(players[3].postElo);
-        
-          if (teamOneSize == 5) {
-            range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneNewElosRange[4]);
-            range.setValue(players[4].postElo);
-          }
-        }
-      }
-    }
-  } 
-  if (teamTwoSize >= 1) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoNewElosRange[0]);
-    range.setValue(players[teamOneSize].postElo);
-
-    if (teamTwoSize >= 2) {
-      range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoNewElosRange[1]);
-      range.setValue(players[teamOneSize+1].postElo);
-    
-      if (teamTwoSize >= 3) {
-        range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoNewElosRange[2]);
-        range.setValue(players[teamOneSize+2].postElo);
-
-        if (teamTwoSize >= 4) {
-          range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoNewElosRange[3]);
-          range.setValue(players[teamOneSize+3].postElo);
-        
-          if (teamTwoSize == 5) {
-            range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoNewElosRange[4]);
-            range.setValue(players[teamOneSize+4].postElo);
-          }
-        }
-      }
-    }
+  var output = new Array(5).fill("").map(() => new Array(1).fill(""));
+  for (let i = 0; i < teamOneSize; i++) {
+    output[i][0] = players[i].postElo;
   }
+  addAMatchSheet.getRange(teamOneNewElosRange.toString()).setValues(output);
+  output = new Array(5).fill("").map(() => new Array(1).fill(""));
+  for (let i = 0; i < teamTwoSize; i++) {
+    output[i][0] = players[teamOneSize+i].postElo;
+  }
+  addAMatchSheet.getRange(teamTwoNewElosRange.toString()).setValues(output);
 
-  updateHistory(players, teamOneScore, teamTwoScore, teamOneSize, teamTwoSize);
+  updateHistory(players, teamOneRoundsWon, teamTwoRoundsWon, teamOneSize, teamTwoSize);
 
   clearCombatScores();
   clearRoundsWon();
@@ -280,83 +246,46 @@ function updateELO() {
  * @brief Adds log to round history
  * 
  * @param players       Array of player that were in the game
- * @param teamOneScore  Number of rounds won by team one
- * @param teamTwoScore  Number of rounds won by team two
+ * @param teamOneRoundsWon  Number of rounds won by team one
+ * @param teamTwoRoundsWon  Number of rounds won by team two
  * @param teamOneSize   Number of players in team one
  * @param teamTwoSize   Number of players in team two
  */
-function updateHistory(players, teamOneScore, teamTwoScore, teamOneSize, teamTwoSize) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Match History");
+function updateHistory(players, teamOneRoundsWon, teamTwoRoundsWon, teamOneSize, teamTwoSize) {
+  var matchHistorySheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Match History");
   var firstEmptyRow = getFirstEmptyRow();
 
   // Write timestamp
-  sheet.getRange("A"+firstEmptyRow).setValue(new Date().toLocaleString());
+  matchHistorySheet.getRange(matchHistGameInfoCols.timestampCol+firstEmptyRow)
+                   .setValue(new Date().toLocaleString());
 
   // Write metrics from players
-  if (teamOneSize >= 1) {
-    sheet.getRange("B"+firstEmptyRow).setValue(players[0].name);
-    sheet.getRange("C"+firstEmptyRow).setValue(players[0].preElo);
-    sheet.getRange("D"+firstEmptyRow).setValue(players[0].combatScore);
-    sheet.getRange("E"+firstEmptyRow).setValue(players[0].postElo);
-    if (teamOneSize >= 2) {
-      sheet.getRange("F"+firstEmptyRow).setValue(players[1].name);
-      sheet.getRange("G"+firstEmptyRow).setValue(players[1].preElo);
-      sheet.getRange("H"+firstEmptyRow).setValue(players[1].combatScore);
-      sheet.getRange("I"+firstEmptyRow).setValue(players[1].postElo);
-      if (teamOneSize >= 3) {
-        sheet.getRange("J"+firstEmptyRow).setValue(players[2].name);
-        sheet.getRange("K"+firstEmptyRow).setValue(players[2].preElo);
-        sheet.getRange("L"+firstEmptyRow).setValue(players[2].combatScore);
-        sheet.getRange("M"+firstEmptyRow).setValue(players[2].postElo);
-        if (teamOneSize >= 4) {
-          sheet.getRange("N"+firstEmptyRow).setValue(players[3].name);
-          sheet.getRange("O"+firstEmptyRow).setValue(players[3].preElo);
-          sheet.getRange("P"+firstEmptyRow).setValue(players[3].combatScore);
-          sheet.getRange("Q"+firstEmptyRow).setValue(players[3].postElo);
-          if (teamOneSize == 5) {
-            sheet.getRange("R"+firstEmptyRow).setValue(players[4].name);
-            sheet.getRange("S"+firstEmptyRow).setValue(players[4].preElo);
-            sheet.getRange("T"+firstEmptyRow).setValue(players[4].combatScore);
-            sheet.getRange("U"+firstEmptyRow).setValue(players[4].postElo);
-          }
-        }
-      }
-    }
+  for (let i = 0; i < teamOneSize; i++) {
+    matchHistorySheet.getRange(matchHistTeamOneCols[i].nameCol+firstEmptyRow)
+                     .setValue(players[i].name);
+    matchHistorySheet.getRange(matchHistTeamOneCols[i].preEloCol+firstEmptyRow)
+                     .setValue(players[i].preElo);
+    matchHistorySheet.getRange(matchHistTeamOneCols[i].combatScoreCol+firstEmptyRow)
+                     .setValue(players[i].combatScore);
+    matchHistorySheet.getRange(matchHistTeamOneCols[i].postEloCol+firstEmptyRow)
+                     .setValue(players[i].postElo);
   }
-  if (teamTwoSize >= 1) {
-    sheet.getRange("V"+firstEmptyRow).setValue(players[teamOneSize].name);
-    sheet.getRange("W"+firstEmptyRow).setValue(players[teamOneSize].preElo);
-    sheet.getRange("X"+firstEmptyRow).setValue(players[teamOneSize].combatScore);
-    sheet.getRange("Y"+firstEmptyRow).setValue(players[teamOneSize].postElo);
-    if (teamTwoSize >= 2) {
-      sheet.getRange("Z"+firstEmptyRow).setValue(players[teamOneSize+1].name);
-      sheet.getRange("AA"+firstEmptyRow).setValue(players[teamOneSize+1].preElo);
-      sheet.getRange("AB"+firstEmptyRow).setValue(players[teamOneSize+1].combatScore);
-      sheet.getRange("AC"+firstEmptyRow).setValue(players[teamOneSize+1].postElo);
-      if (teamTwoSize >= 3) {
-        sheet.getRange("AD"+firstEmptyRow).setValue(players[teamOneSize+2].name);
-        sheet.getRange("AE"+firstEmptyRow).setValue(players[teamOneSize+2].preElo);
-        sheet.getRange("AF"+firstEmptyRow).setValue(players[teamOneSize+2].combatScore);
-        sheet.getRange("AG"+firstEmptyRow).setValue(players[teamOneSize+2].postElo);
-        if (teamTwoSize >= 4) {
-          sheet.getRange("AH"+firstEmptyRow).setValue(players[teamOneSize+3].name);
-          sheet.getRange("AI"+firstEmptyRow).setValue(players[teamOneSize+3].preElo);
-          sheet.getRange("AJ"+firstEmptyRow).setValue(players[teamOneSize+3].combatScore);
-          sheet.getRange("AK"+firstEmptyRow).setValue(players[teamOneSize+3].postElo);
-          if (teamTwoSize == 5) {
-            sheet.getRange("AL"+firstEmptyRow).setValue(players[teamOneSize+4].name);
-            sheet.getRange("AM"+firstEmptyRow).setValue(players[teamOneSize+4].preElo);
-            sheet.getRange("AN"+firstEmptyRow).setValue(players[teamOneSize+4].combatScore);
-            sheet.getRange("AO"+firstEmptyRow).setValue(players[teamOneSize+4].postElo);
-          }
-        }
-      }
-    }
+  for (let i = 0; i < teamTwoSize; i++) {
+    matchHistorySheet.getRange(matchHistTeamTwoCols[i].nameCol+firstEmptyRow)
+                     .setValue(players[teamOneSize+i].name);
+    matchHistorySheet.getRange(matchHistTeamTwoCols[i].preEloCol+firstEmptyRow)
+                     .setValue(players[teamOneSize+i].preElo);
+    matchHistorySheet.getRange(matchHistTeamTwoCols[i].combatScoreCol+firstEmptyRow)
+                     .setValue(players[teamOneSize+i].combatScore);
+    matchHistorySheet.getRange(matchHistTeamTwoCols[i].postEloCol+firstEmptyRow)
+                     .setValue(players[teamOneSize+i].postElo);
   }
 
   // Write rounds won
-  sheet.getRange("AP"+firstEmptyRow).setValue(teamOneScore);
-  sheet.getRange("AQ"+firstEmptyRow).setValue(teamTwoScore);
+  matchHistorySheet.getRange(matchHistGameInfoCols.teamOneRoundsWonCol+firstEmptyRow)
+                   .setValue(teamOneRoundsWon);
+  matchHistorySheet.getRange(matchHistGameInfoCols.teamTwoRoundsWonCol+firstEmptyRow)
+                   .setValue(teamTwoRoundsWon);
 
   return false;
 }
