@@ -39,7 +39,7 @@ var teamTwoRoundsWonRange = "B27";
 var teamTwoPlayerRange = ["A21","A22","A23","A24","A25"];
 // Note: teamTwoPlayerRange is just teamTwoPlayersRange but explicitly states each cell in an array
 
-/* Quick View Data Ranges*/
+/* Quick View Data Ranges */
 var teamOneNewElosRange = ["B31","B32","B33","B34","B35"];
 var teamTwoNewElosRange = ["D31","D32","D33","D34","D35"];
 
@@ -53,3 +53,14 @@ var teamTwoSelOutputRange = "D10:D88";
 var teamSelNumRows = 79;
 var teamSelectionPlayersRowOffset = 1;
 var teamSelectionOptionRowSpacing = 8;
+
+/* Elo Algorithm */
+var responsibilityFactor = 11;
+// Note: The higher the factor, the higher score that higher elo players are expected to score and
+//       the smaller the score that lower elo players are expected to score in a given game.
+//       Recommended to use 11 as the reponsibility factor for Valorant games.
+var outperformThreshold = 200;
+// Note: Number of combat points over expected needed to cancel out any base elo responsibility
+// Ex: If a team of 5 is responsible for -25 elo change,  then each player will have a base elo
+//     responsiblity of -5. If a player scores 200 combat points above expected, then they don't
+//     lose any points, and can gain points despite loss

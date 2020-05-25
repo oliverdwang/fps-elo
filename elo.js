@@ -33,10 +33,10 @@
  */
 function determineK(teamOneScore, teamTwoScore) {
   // Parameters
-  var buckets = [{lo: 0.00, hi: 0.25, k: 128}, // score of 0/13 to 3/13
-                 {lo: 0.25, hi: 0.50, k: 96},  // score of 4/13 to 6/13
-                 {lo: 0.50, hi: 0.80, k: 64},  // score of 7/13 to 10/13
-                 {lo: 0.80, hi: 1.00, k: 32}]; // score of 11/13 to 13/13
+  var buckets = [{lo: 0.00, hi: 0.25, k: 120}, // score of 0/13 to 3/13
+                 {lo: 0.25, hi: 0.50, k: 80},  // score of 4/13 to 6/13
+                 {lo: 0.50, hi: 0.80, k: 40},  // score of 7/13 to 10/13
+                 {lo: 0.80, hi: 1.00, k: 20}]; // score of 11/13 to 13/13
   var defaultK = 32;
   
   var decisiveness = Math.min(teamOneScore, teamTwoScore) / Math.max(teamOneScore, teamTwoScore);
@@ -52,60 +52,99 @@ function determineK(teamOneScore, teamTwoScore) {
  * @brief Updates the ELO for a given match of up to 5v5
  */
 function updateELO() {
+  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
+  var playersSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Players");
   //Inputs
-  var teamOnePlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOnePlayersRange).getValues();
-  var teamOneElosRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneElosRange).getValues();
-  var teamOneCombatScoresRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneCombatScoresRange).getValues();
+  var teamOnePlayersRaw = addAMatchSheet.getRange(teamOnePlayersRange).getValues();
+  var teamOneElosRaw = addAMatchSheet.getRange(teamOneElosRange).getValues();
+  var teamOneCombatScoresRaw = addAMatchSheet.getRange(teamOneCombatScoresRange).getValues();
   var teamOnePlayers = [];
   var teamOneElos = [];
   var teamOneCombatScores = [];
   var teamOneSize = 0;
   var teamOneElo = 0;
+  var teamOneCombatScore = 0;
   for (let i = 0; i < teamOnePlayersRaw.length; i++) {
     var player = teamOnePlayersRaw[i][0];
     if (player != "") {
       teamOneSize++;
-      var elo = teamOneElosRaw[i][0];
+      let elo = teamOneElosRaw[i][0];
+      let combatScore = teamOneCombatScoresRaw[i][0];
       teamOneElo += elo;
+      teamOneCombatScore += combatScore;
       teamOnePlayers.push(player)
       teamOneElos.push(elo);
-      teamOneCombatScores.push(teamOneCombatScoresRaw[i][0]);
+      teamOneCombatScores.push(combatScore);
     }
   }
 
-  var teamOneScore = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneRoundsWonRange).getValue();
+  var teamOneScore = addAMatchSheet.getRange(teamOneRoundsWonRange).getValue();
 
-  var teamTwoPlayersRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoPlayersRange).getValues();
-  var teamTwoElosRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoElosRange).getValues();
-  var teamTwoCombatScoresRaw = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoCombatScoresRange).getValues();
+  var teamTwoPlayersRaw = addAMatchSheet.getRange(teamTwoPlayersRange).getValues();
+  var teamTwoElosRaw = addAMatchSheet.getRange(teamTwoElosRange).getValues();
+  var teamTwoCombatScoresRaw = addAMatchSheet.getRange(teamTwoCombatScoresRange).getValues();
   var teamTwoPlayers = [];
   var teamTwoElos = [];
   var teamTwoCombatScores = [];
   var teamTwoSize = 0;
   var teamTwoElo = 0;
+  var teamTwoCombatScore = 0;
   for (let i = 0; i < teamTwoPlayersRaw.length; ++i) {
     var player = teamTwoPlayersRaw[i][0];
     if (player != "") {
       teamTwoSize++;
-      var elo = teamTwoElosRaw[i][0];
+      let elo = teamTwoElosRaw[i][0];
+      let combatScore = teamTwoCombatScoresRaw[i][0];
       teamTwoElo += elo;
+      teamTwoCombatScore += combatScore;
       teamTwoPlayers.push(player);
       teamTwoElos.push(elo);
-      teamTwoCombatScores.push(teamTwoCombatScoresRaw[i][0]);
+      teamTwoCombatScores.push(combatScore);
     }
   }
 
-  var teamTwoScore = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamTwoRoundsWonRange).getValue();
+  var teamTwoScore = addAMatchSheet.getRange(teamTwoRoundsWonRange).getValue();
 
   // Put player statistics into player objects and unified array
   var players = [];
+  var teamOneTotalWeightedPercentile = 0;
   for (let i = 0; i < teamOneSize; i++) {
-    players.push({name: teamOnePlayers[i], preElo: teamOneElos[i], postElo: teamOneElos[i],
-                  percEloLose: 0, percEloWin: 0, combatScore: teamOneCombatScores[i]});
+    let percentile = playersSheet.getRange("D"+getPlayerRow(teamOnePlayers[i])).getValue();
+    let weightedPercentile = Math.pow(percentile, 1/responsibilityFactor);
+    teamOneTotalWeightedPercentile += weightedPercentile;
+    players.push({name: teamOnePlayers[i],
+                  weightedPercentile: weightedPercentile,
+                  preElo: teamOneElos[i],
+                  eloResponsibility: 0,
+                  postElo: teamOneElos[i],
+                  combatScore: teamOneCombatScores[i],
+                  expectedCombatScore: 0,
+                  deltaCombatScore: 0});
   }
+  var teamTwoTotalWeightedPercentile = 0;
   for (let i = 0; i < teamTwoSize; i++) {
-    players.push({name: teamTwoPlayers[i], preElo: teamTwoElos[i], postElo: teamTwoElos[i],
-                  percEloLose: 0, percEloWin: 0, combatScore: teamTwoCombatScores[i]});
+    let percentile = playersSheet.getRange("D"+getPlayerRow(teamTwoPlayers[i])).getValue();
+    let weightedPercentile = Math.pow(percentile, 1/responsibilityFactor);
+    teamTwoTotalWeightedPercentile += weightedPercentile;
+    players.push({name: teamTwoPlayers[i],
+                  weightedPercentile: weightedPercentile,
+                  preElo: teamTwoElos[i],
+                  postElo: teamTwoElos[i],
+                  combatScore: teamTwoCombatScores[i],
+                  expectedCombatScore: 0,
+                  deltaCombatScore: 0});
+  }
+
+  // Calculate combat score metrics
+  for (let i = 0; i < teamOneSize; i++) {
+    players[i].expectedCombatScore = teamOneCombatScore * players[i].weightedPercentile / teamOneTotalWeightedPercentile;
+    players[i].deltaCombatScore = players[i].combatScore - players[i].expectedCombatScore;
+  }
+
+  // Calculate combat score metrics
+  for (let i = teamOneSize; i < teamOneSize+teamTwoSize; i++) {
+    players[i].expectedCombatScore = teamTwoCombatScore * players[i].weightedPercentile / teamTwoTotalWeightedPercentile;
+    players[i].deltaCombatScore = players[i].combatScore - players[i].expectedCombatScore;
   }
   
   // Elo computation variables
@@ -113,74 +152,6 @@ function updateELO() {
   const n = 2;
   // Volatility factor
   const k = determineK(teamOneScore, teamTwoScore);
-  
-  // Find elo responsibility of individual team members in the case of losing
-  for (let i = 0; i < teamOneSize; i++) {
-    players[i].percEloLose = 100 * players[i].preElo / teamOneElo;
-  }
-  
-  for (let i = teamOneSize; i < teamOneSize+teamTwoSize; i++) {
-    players[i].percEloLose = 100 * players[i].preElo / teamTwoElo;
-  }
-  
-  // Find elo responsibility of individual team members in the case of winning
-  // Basic idea is to assign responsibility in reverse order for percEloLose, but need to adjust for multiple people with same elo
-  var accumPerc = 0;
-  var accumPlayers = 0;
-  for (let i = 0; i < teamOneSize; i++) {
-    if((i+1 < teamOneSize) && players[i].preElo == players[i+1].preElo) {
-      // Multiple players with same elo, so accumulate opposing responsibility
-      accumPerc += players[teamOneSize-i-1].percEloLose;
-      accumPlayers++;
-    } else {
-      if (accumPlayers != 0) {
-        // End of streak of people with the same lo
-        accumPerc += players[teamOneSize-i-1].percEloLose;
-        accumPlayers++;
-        var avgPerc = accumPerc / accumPlayers;
-        // Distribute avgPerc across players with same elo
-        for (let j = i; accumPlayers > 0; j--) {
-          players[j].percEloWin = avgPerc;
-          accumPlayers--;
-        }
-        // Reset counters
-        accumPlayers = 0;
-        accumPerc = 0;
-      } else {
-        // Unique elos, so no finagling needed
-        players[i].percEloWin = players[teamOneSize-i-1].percEloLose;
-      }
-    }
-  }
-  accumPerc = 0;
-  accumPlayers = 0;
-  for (let i = teamOneSize; i < teamOneSize+teamTwoSize; i++) {
-    if((i+1 < teamOneSize+teamTwoSize) && players[i].preElo == players[i+1].preElo) {
-      // Multiple players with same elo, so accumulate opposing responsibility
-      accumPerc += players[teamOneSize+teamTwoSize-i-1].percEloLose;
-      accumPlayers++;
-    } else {
-      if (accumPlayers != 0) {
-        // End of streak of people with the same lo
-        accumPerc += players[teamOneSize+teamTwoSize-i-1].percEloLose;
-        accumPlayers++;
-        var avgPerc = accumPerc / accumPlayers;
-        // Distribute avgPerc across players with same elo
-        for (let j = i; accumPlayers > 0; j--) {
-          players[j].percEloWin = avgPerc;
-          accumPlayers--;
-        }
-        // Reset counters
-        accumPlayers = 0;
-        accumPerc = 0;
-      } else {
-        // Unique elos, so no finagling needed
-        players[i].percEloWin = players[teamOneSize+teamOneSize-i-1].percEloLose;
-      }
-    }
-  }
-  // FOR DEBUG:
-  //Browser.msgBox("team1: "+players[0].percEloWin+" "+players[1].percEloWin+" "+players[2].percEloWin+" "+players[3].percEloWin+" "+players[4].percEloWin)
   
   // Compute Elo as overall teams
   let s = 9;
@@ -197,20 +168,31 @@ function updateELO() {
   
   // Update elos of team members according to elo responsibility
   for (let i = 0; i < teamOneSize; i++) {
-    players[i].postElo += 0.01*teamOneEloChange*(s*players[i].percEloWin+(1-s)*players[i].percEloLose);
+    if (teamOneEloChange >= 0) {
+      players[i].postElo += (teamOneEloChange / teamOneSize) * // base elo responsibility
+                            (1 + players[i].deltaCombatScore / outperformThreshold);
+    } else {
+      players[i].postElo += (teamOneEloChange / teamOneSize) * // base elo responsibility
+                            (1 - players[i].deltaCombatScore / outperformThreshold);
+    }
   }
   for (let i = teamOneSize; i < teamOneSize+teamTwoSize; i++) {
-    players[i].postElo += 0.01*teamTwoEloChange*((1-s)*players[i].percEloWin+s*players[i].percEloLose);
+    if (teamTwoEloChange >= 0) {
+      players[i].postElo += (teamTwoEloChange / teamTwoSize) * // base elo responsibility
+                            (1 + players[i].deltaCombatScore / outperformThreshold);
+    } else {
+      players[i].postElo += (teamTwoEloChange / teamTwoSize) * // base elo responsibility
+                            (1 - players[i].deltaCombatScore / outperformThreshold);
+    }
   }
 
   // Update players tab
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Players");
   // Iterate through each player
   for (let i = 0; i < teamOneSize+teamTwoSize; i++) {
     var row = getPlayerRow(players[i].name)
     if (row > 0) {
       // Found matching name, so update respective elo
-      sheet.getRange("C"+row).setValue(players[i].postElo);
+      playersSheet.getRange("C"+row).setValue(players[i].postElo);
     } else {
       // Invalid row found
       Browser.msgBox("Error: Player not found");
@@ -220,7 +202,7 @@ function updateELO() {
   
   // Update spreadsheet for quick view
   if (teamOneSize >= 1) {
-    var range = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match").getRange(teamOneNewElosRange[0]);
+    var range = addAMatchSheet.getRange(teamOneNewElosRange[0]);
     range.setValue(players[0].postElo);
 
     if (teamOneSize >= 2) {
