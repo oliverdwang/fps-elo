@@ -52,11 +52,12 @@ function determineK(teamOneRoundsWon, teamTwoRoundsWon) {
  * @brief Updates the ELO for a given match of up to 5v5
  */
 function updateELO() {
+  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
+  var playersSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Players");
   // Sort players in terms of elo
   addAMatchSheet.getRange(teamOneNamesRange.strRow+":"+teamOneNamesRange.stpRow).sort({column: 2, ascending: true});
   addAMatchSheet.getRange(teamTwoNamesRange.strRow+":"+teamTwoNamesRange.stpRow).sort({column: 2, ascending: true});
   //Inputs
-  var addAMatchSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Add a Match");
   var teamOnePlayersRaw = addAMatchSheet.getRange(teamOneNamesRange.toString()).getValues();
   var teamOneElosRaw = addAMatchSheet.getRange(teamOneElosRange.toString()).getValues();
   var teamOneCombatScoresRaw = addAMatchSheet.getRange(teamOneCombatScoresRange.toString()).getValues();
