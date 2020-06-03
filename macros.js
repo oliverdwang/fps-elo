@@ -6,7 +6,5 @@ function sortTeams() {
 
 function sortPlayers() {
   var spreadsheet = SpreadsheetApp.getActive();
-  spreadsheet.getRange('2:26').activate()
-  .sort({column: 3, ascending: false});
-  spreadsheet.getRange('D3').activate();
+  spreadsheet.getRange('2:28').sort({column: 3, ascending: false});
 };

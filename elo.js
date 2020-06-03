@@ -33,9 +33,9 @@
  */
 function determineK(teamOneRoundsWon, teamTwoRoundsWon) {
   // Parameters
-  var buckets = [{lo: 0.00, hi: 0.25, k: 120}, // score of 0/13 to 3/13
-                 {lo: 0.25, hi: 0.50, k: 80},  // score of 4/13 to 6/13
-                 {lo: 0.50, hi: 0.80, k: 40},  // score of 7/13 to 10/13
+  var buckets = [{lo: 0.00, hi: 0.25, k: 60}, // score of 0/13 to 3/13
+                 {lo: 0.25, hi: 0.50, k: 45},  // score of 4/13 to 6/13
+                 {lo: 0.50, hi: 0.80, k: 30},  // score of 7/13 to 10/13
                  {lo: 0.80, hi: 1.00, k: 20}]; // score of 11/13 to 13/13
   var defaultK = 32;
   
