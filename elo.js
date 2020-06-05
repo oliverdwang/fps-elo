@@ -141,12 +141,20 @@ function updateELO() {
   for (let i = 0; i < teamOneSize; i++) {
     players[i].expectedCombatScore = teamOneCombatScore * players[i].weightedPercentile / teamOneTotalWeightedPercentile;
     players[i].deltaCombatScore = players[i].combatScore - players[i].expectedCombatScore;
+    if (Math.abs(players[i].deltaCombatScore) > outperformThreshold) {
+      Browser.msgBox("Warning! " + players[i].name + " exceeded OPT");
+      return;
+    }
   }
 
   // Calculate combat score metrics
   for (let i = teamOneSize; i < teamOneSize+teamTwoSize; i++) {
     players[i].expectedCombatScore = teamTwoCombatScore * players[i].weightedPercentile / teamTwoTotalWeightedPercentile;
     players[i].deltaCombatScore = players[i].combatScore - players[i].expectedCombatScore;
+    if (Math.abs(players[i].deltaCombatScore) > outperformThreshold) {
+      Browser.msgBox("Warning! " + players[i].name + " exceeded OPT");
+      return;
+    }
   }
   
   // Elo computation variables
