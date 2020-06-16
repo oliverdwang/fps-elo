@@ -13,8 +13,8 @@ function randomMap() {
   // Fit range between [0, 1)
   var buckets = [{lo: 0.00, hi: 0.25, map: "Split"},
                  {lo: 0.25, hi: 0.50, map: "Ascent"},
-                 {lo: 0.50, hi: 0.75, map: "Bind"},
-                 {lo: 0.75, hi: 1.00, map: "Split"}]; // Last is default
+                 {lo: 0.50, hi: 0.75, map: "Haven"},
+                 {lo: 0.75, hi: 1.00, map: "Bind"}]; // Last is default
   var numOfBuckets = buckets.length;
   var number = Math.random();
   for (let i = 0; i < numOfBuckets; i++) {
