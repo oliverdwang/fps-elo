@@ -20,7 +20,8 @@ function randomMap() {
   for (let i = 0; i < numOfBuckets; i++) {
     if ((buckets[i].lo <= number && number < buckets[i].hi) ||
         i == numOfBuckets - 1) {
-      return buckets[i].map;
+          Browser.msgBox("Random map selection: " + buckets[i].map);
+          return;
     }
   }
   Browser.msgBox("Random map selection: " + buckets[numOfBuckets - 1].map);

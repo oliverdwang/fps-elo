@@ -90,7 +90,6 @@ function balanceTeams() {
     teamOneOutput[baseRowOffset+5][0] = "Cumulative";
     teamTwoOutput[baseRowOffset+5][0] = "Cumulative";
   }
-  Browser.msgBox(teamOneOutput[0].length);
   teamOneOutputRange.setValues(teamOneOutput);
   teamTwoOutputRange.setValues(teamTwoOutput);
 
