@@ -6,7 +6,7 @@ function sortTeams() {
 
 function sortPlayers() {
   var spreadsheet = SpreadsheetApp.getActive();
-  spreadsheet.getRange('2:28').sort({column: 3, ascending: false});
+  spreadsheet.getRange('2:99').sort({column: 3, ascending: false});
 };
 
 function randomMap() {
