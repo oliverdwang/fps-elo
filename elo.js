@@ -143,7 +143,6 @@ function updateELO() {
     players[i].deltaCombatScore = players[i].combatScore - players[i].expectedCombatScore;
     if (Math.abs(players[i].deltaCombatScore) > outperformThreshold) {
       Browser.msgBox("Warning! " + players[i].name + " exceeded OPT");
-      return;
     }
   }
 
@@ -153,7 +152,6 @@ function updateELO() {
     players[i].deltaCombatScore = players[i].combatScore - players[i].expectedCombatScore;
     if (Math.abs(players[i].deltaCombatScore) > outperformThreshold) {
       Browser.msgBox("Warning! " + players[i].name + " exceeded OPT");
-      return;
     }
   }
   
